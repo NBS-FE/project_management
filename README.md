@@ -1,2 +1,5 @@
 # project_management
-NBS project management system
+前端：project_management_web
+Vue+Element-ui
+后台：project_management_server
+Nodejs+Express
