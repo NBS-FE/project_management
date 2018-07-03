@@ -2,8 +2,8 @@
  * Created by Jerry on 2018/7/2.
  */
 const Sequelize = require('sequelize');
-var sequelize = new Sequelize('project_management', 'root', 'root', {
-    host: '127.0.0.1',
+var sequelize = new Sequelize('project_management', 'root', '123456', {
+    host: '192.168.1.227',
     port : '3306',
     dialect: 'mysql',
     pool: {
