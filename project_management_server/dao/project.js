@@ -17,7 +17,7 @@ exports.queryList=function (req, res, next) {
 		var resultData=undefined;
 		if(result!=null){
             resultData={
-            	userList:result.rows,
+                projectList:result.rows,
 				count:result.count
 			}
 		}
