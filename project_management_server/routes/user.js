@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var userDao=require('./dao/user.js')
+var userDao=require('../dao/user')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 
 //获取用户列表
 router.get('/getUserList', function(req, res, next) {
-    userDao.add(req, res, next);
+    userDao.queryList(req, res, next);
 });
 
 module.exports = router;
