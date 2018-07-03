@@ -14,7 +14,14 @@ var jsonWrite = function (res, ret) {
 
 exports.queryList=function (req, res, next) {
 	userModel.findAndCountAll().then(function (result) {
-        jsonWrite(res, result);
+		var resultData=undefined;
+		if(result!=null){
+            resultData={
+            	userList:result.rows,
+				count:result.count
+			}
+		}
+        jsonWrite(res, resultData);
     })
 
 
