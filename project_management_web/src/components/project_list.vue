@@ -10,16 +10,21 @@
             <el-table
               :data="projectList"
               style="width: 100%">
-              <el-table-column type="expand">
+              <el-table-column type="expand" >
                 <template slot-scope="props" >
-                 <div style="text-align: left">网站入口：</div>
+                 <div style="text-align: left">网站入口：
+                 <a class="btn btn-default margin-left-10 info" v-for="(projectUrl,index) in props.row.ProjectUrls" target="_blank" v-bind:href="projectUrl.project_url">{{projectUrl.project_url_name}}<i class="margin-left-5 el-icon-d-arrow-right"></i></a>
+                 </div>
                 </template>
               </el-table-column>
               <el-table-column
-
                 header-align="center"
                 label="项目名称"
-                prop="project_name">
+                prop="project_name"
+                class-name="fs15" label-class-name="fs14">
+              <!--  <template slot-scope="scope">
+                  <span class="fs16">{{scope.row.project_name}}</span>
+                </template>-->
               </el-table-column>
               <el-table-column
                 width="150"

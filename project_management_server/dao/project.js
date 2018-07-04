@@ -1,4 +1,5 @@
 var projectModel=require('../model/project')
+var projectUrlModel=require('../model/project_url')
 
 var jsonWrite = function (res, ret) {
     if(typeof ret === 'undefined') {
@@ -13,7 +14,9 @@ var jsonWrite = function (res, ret) {
 };
 
 exports.queryList=function (req, res, next) {
-    projectModel.findAndCountAll().then(function (result) {
+    projectModel.findAndCountAll({include: [{
+        model: projectUrlModel
+    }]}).then(function (result) {
 		var resultData=undefined;
 		if(result!=null){
             resultData={

@@ -3,7 +3,8 @@
  */
 
 var Sequelize = require('sequelize');
-var sequelize=require('../conf/db')
+var sequelize=require('../conf/db');
+var projectUrlModel=require('../model/project_url');
 var Project = sequelize.define('Project', {
     project_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     project_name : {type : Sequelize.STRING},
@@ -23,4 +24,5 @@ var Project = sequelize.define('Project', {
     charset: 'utf8',
     collate: 'utf8_general_ci'
 });
+Project.hasMany(projectUrlModel, {foreignKey:'project_id', targetKey:'project_id'});
 module.exports=Project;
