@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
+import moment from 'moment';
+import config from './config'
 import './assets/css/bootstrap.min.css'
 import './assets/css/font-awesome.min.css'
 import './assets/css/reset.css'
@@ -11,7 +13,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-Vue.prototype.$axios = axios
+Vue.prototype.$http = axios
+Vue.prototype.$moment = moment
+Vue.prototype.config = config
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

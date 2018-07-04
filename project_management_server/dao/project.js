@@ -26,7 +26,22 @@ exports.queryList=function (req, res, next) {
 		}
         jsonWrite(res, resultData);
     })
-
-
 }
 
+exports.insertProject=function (req, res, next) {
+    var projectData=req.body;
+    projectModel.create(projectData)
+        .then(function (result) {
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    projectList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        }).catch(function (err) {
+        console.log('project/addProject error:' + err)
+    })
+
+}
