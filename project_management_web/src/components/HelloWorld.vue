@@ -1,5 +1,5 @@
 <template>
-  <!--<div class="hello">
+  <div class="hello">
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -81,28 +81,6 @@
       </li>
     </ul>
     <el-button type="primary">主要按钮</el-button>
-  </div>-->
-  <div class="login-box" id="hello">
-    <el-row>
-      <el-col>
-        <el-input id="name" auto-complete="off" v-model="name" placeholder="请输入账号" clearable>
-          <template slot="prepend">账号</template>
-        </el-input>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:10px;">
-      <el-col >
-        <el-input id="password" auto-complete="off" v-model="password" type="password" placeholder="请输入密码" clearable>
-          <template slot="prepend">密码</template>
-        </el-input>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col style="text-align: center;margin-top:10px;">
-        <el-button id="login" @click="check"  type="primary">登录</el-button><router-link tag='a' :to="'/register'" >注册</router-link>
-      </el-col>
-    </el-row>
-
   </div>
 </template>
 
@@ -111,23 +89,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
-      name:'',
-      password:''
-    }
-  },
-  methods: {
-    check(){
-      this.$http.post('http://127.0.0.1:3000/user/login', {
-        name:this.name,
-        password: this.password,
-      }, {}).then((response) => {
-        var result = response.data;
-        var response = result.code;
-        if (response == 0) {
-            this.$router.push({path:'/project'});
-        }
-      })
+      msg: 'Welcome to Your Vue.js App'
     }
   }
 }
@@ -135,14 +97,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .login-box {
-    margin-top:15%;
-    margin-left:40%;
-    background-image:url(../assets/back.png);
-    width:350px;
-    height:250px;
-    padding:60px 50px;
-  }
 h1, h2 {
   font-weight: normal;
 }

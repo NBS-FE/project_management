@@ -12,8 +12,4 @@ router.get('/getUserList', function(req, res, next) {
     userDao.queryList(req, res, next);
 });
 
-router.post('/login',function(req, res, next){
-    userDao.login(req, res, next)
-})
-
 module.exports = router;
