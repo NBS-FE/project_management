@@ -12,4 +12,9 @@ router.get('/getUserList', function(req, res, next) {
     userDao.queryList(req, res, next);
 });
 
+router.get('/register', function(req, res, next) {
+    userDao.queryList(req, res, next);
+});
+
+
 module.exports = router;

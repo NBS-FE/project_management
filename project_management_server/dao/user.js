@@ -12,7 +12,7 @@ var jsonWrite = function (res, ret) {
     }
 };
 
-exports.queryList=function (req, res, next) {
+/*exports.queryList=function (req, res, next) {
 	userModel.findAndCountAll().then(function (result) {
 		var resultData=undefined;
 		if(result!=null){
@@ -23,7 +23,51 @@ exports.queryList=function (req, res, next) {
 		}
         jsonWrite(res, resultData);
     })
+}*/
 
+module.exports = {
+    queryList:function (req, res, next) {
+        userModel.findAndCountAll().then(function (result) {
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    userList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        })
+    },
+    login:function(req, res, next){
+        var params = req.body;
+        userModel.findAll({where:{user_name:params.user_name,user_password:params.user_password}}).then(function(result){
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    userList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        })
+    },
+    register:function(req, res, next){
+        var params = req.body;
+        userModel.create({user_name:params.user_name,user_phone:params.user_phone,user_email:params.user_email,user_password:params.user_password}).then(function(result){
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    userList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        })
+    }
 
 }
+
+
+
+
 
