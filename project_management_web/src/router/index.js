@@ -15,6 +15,9 @@ export default new Router({
         { path: 'conference/:projectId', component: resolve => require(['../views/project_conference.vue'], resolve) },
         { path: 'setting/:projectId', component: resolve => require(['../views/project_setting.vue'], resolve) }
       ]
-    }
+    },
+    { path: '/userList', component: resolve => require(['../views/user_list.vue'], resolve)},
+    { path: '/register', component: resolve => require(['../views/register.vue'], resolve)}
+
   ]
 })
