@@ -1,36 +1,36 @@
 <template>
     <el-container style="height: 100%">
       <el-header class="p-header">
-        <span class="header-title">国家信息中心内部控制平台</span>
+        <span class="header-title">{{projectInfo.project_name}}</span>
         <el-button size="small" @click="returnPage" type="info" style="float: right;margin-top:15px " round><i class="fa fa-mail-reply margin-right-5"></i>返回</el-button>
       </el-header>
       <el-container>
         <el-aside width="200px">
           <el-menu
-            default-active="/project/home" router
+            :default-active="activeRouter" router
             class="el-menu-left">
-              <el-menu-item index="/project/home">
+              <el-menu-item :index="'/project/home/'+projectId">
                 <i class="el-icon-location"></i>
                 <span slot="title">项目首页</span>
               </el-menu-item>
-              <el-menu-item index="module">
+              <el-menu-item :index="'/project/module/'+projectId">
                 <i class="el-icon-menu"></i>
                 <span slot="title">项目模块</span>
               </el-menu-item>
-              <el-menu-item index="require">
-                <i class="el-icon-menu"></i>
+              <el-menu-item :index="'/project/demand/'+projectId">
+                <i class="el-icon-location-outline"></i>
                 <span slot="title">项目需求</span>
               </el-menu-item>
-            <el-menu-item index="release">
-              <i class="el-icon-menu"></i>
+            <el-menu-item :index="'/project/release/'+projectId">
+              <i class="el-icon-document"></i>
               <span slot="title">发布记录</span>
             </el-menu-item>
-            <el-menu-item index="conference">
-              <i class="el-icon-menu"></i>
+            <el-menu-item :index="'/project/conference/'+projectId">
+              <i class="el-icon-phone-outline"></i>
               <span slot="title">会议记录</span>
             </el-menu-item>
-            <el-menu-item index="set">
-              <i class="el-icon-menu"></i>
+            <el-menu-item :index="'/project/setting/'+projectId">
+              <i class="el-icon-setting"></i>
               <span slot="title">项目设置</span>
             </el-menu-item>
 
@@ -48,22 +48,31 @@
   export default {
     data() {
       return {
-
+        projectInfo:"",
+        projectId:this.$route.params.projectId,
+        activeRouter:'/project/home/'+this.$route.params.projectId
       }
     },
     created(){
-
+        this.getProjectInfo()
     },
     methods :{
-      getProjectList:function () {
+      getProjectInfo:function () {
         var vm=this;
         vm.$http({
           method: 'get',
-          url: vm.config.baseUrl+'project/getProjectList'
+          url: vm.config.baseUrl+'project/getProjectInfo',
+          params:{
+              project_id:vm.projectId
+          }
         }).then(function(response) {
           var data=response.data
-          vm.projectList=data.projectList
-
+          var code=data.code;
+          if(code==0){
+            vm.projectInfo=data.projectInfo
+          }else {
+              console.log(data.msg)
+          }
         }).catch(function(response){
           console.log(response)
         })

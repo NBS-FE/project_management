@@ -1,4 +1,4 @@
-var projectModel=require('../model/project')
+
 var projectUrlModel=require('../model/project_url')
 
 var jsonWrite = function (res, ret) {
@@ -12,26 +12,7 @@ var jsonWrite = function (res, ret) {
         res.json(ret);
     }
 };
-/**
- * 查询项目列表
- * @param req
- * @param res
- * @param next
- */
-exports.queryList=function (req, res, next) {
-    projectModel.findAndCountAll({include: [{
-        model: projectUrlModel
-    }]}).then(function (result) {
-		var resultData=undefined;
-		if(result!=null){
-            resultData={
-                projectList:result.rows,
-				count:result.count
-			}
-		}
-        jsonWrite(res, resultData);
-    })
-}
+
 
 /**
  * 新增项目
@@ -39,9 +20,9 @@ exports.queryList=function (req, res, next) {
  * @param res
  * @param next
  */
-exports.insertProject=function (req, res, next) {
-    var projectData=req.body;
-    projectModel.create(projectData)
+exports.insertProjectUrl=function (req, res, next) {
+    var urlData=req.body;
+    projectUrlModel.create(urlData)
         .then(function (result) {
             var resultData=undefined;
             if(result!=null){
@@ -58,15 +39,14 @@ exports.insertProject=function (req, res, next) {
 }
 
 /**
- * 新增项目
+ * 修改项目基本信息
  * @param req
  * @param res
  * @param next
  */
-exports.updateProject=function (req, res, next) {
-    var projectData=req.body;
-    projectModel.update(projectData,
-        {where:{project_id:projectData.project_id}})
+exports.updateProjectUrl=function (req, res, next) {
+    var urlData=req.body;
+    projectUrlModel.update(urlData,{where:{project_url_id:urlData.project_url_id}})
         .then(function (result) {
             var resultData=undefined;
             if(result!=null){
@@ -77,36 +57,30 @@ exports.updateProject=function (req, res, next) {
             }
             jsonWrite(res, resultData);
         }).catch(function (err) {
-        console.log('project/addProject error:' + err)
+        console.log('project/updateProjectUrl error:' + err)
     })
 
 }
-
 /**
- * 获取项目基本信息
+ * 删除项目网址
  * @param req
  * @param res
  * @param next
  */
-exports.getProjectInfo=function (req, res, next) {
-    var projectId=req.query.project_id;
-    if(projectId!=null&&projectId.length>0){
-        projectModel.findOne({include: [{
-            model: projectUrlModel
-        }],where:{project_id:projectId}}).then(function (result) {
+exports.deleteProjectUrl=function (req, res, next) {
+    var urlId=req.body.project_url_id;
+    projectUrlModel.destroy({where:{project_url_id:urlId}})
+        .then(function (result) {
             var resultData=undefined;
             if(result!=null){
                 resultData={
-                    projectInfo:result
+                    projectList:result.rows,
+                    count:result.count
                 }
             }
             jsonWrite(res, resultData);
-        })
-    }else {
-        res.json({
-            code:'1',
-            msg: '参数project_id不能为空！！'
-        });
-    }
+        }).catch(function (err) {
+        console.log('project/deleteProjectUrl error:' + err)
+    })
 
 }
