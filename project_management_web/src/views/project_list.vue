@@ -14,7 +14,7 @@
               <el-table-column type="expand" >
                 <template slot-scope="props" >
                  <div style="text-align: left" v-show="props.row.ProjectUrls&&props.row.ProjectUrls.length>0">网站入口：
-                 <a class="btn btn-default margin-left-10 info" v-for="(projectUrl,index) in props.row.ProjectUrls" target="_blank" v-bind:href="projectUrl.project_url">{{projectUrl.project_url_name}}<i class="margin-left-5 el-icon-d-arrow-right"></i></a>
+                    <a class="btn btn-default margin-left-10 info" v-for="(projectUrl,index) in props.row.ProjectUrls" target="_blank" v-bind:href="projectUrl.project_url">{{projectUrl.project_url_name}}<i class="margin-left-5 el-icon-d-arrow-right"></i></a>
                  </div>
                   <div style="text-align: left" class="danger" v-show="props.row.ProjectUrls==null||props.row.ProjectUrls.length==0">
                     该项目暂无网站入口
@@ -27,7 +27,7 @@
                 prop="project_name"
                 class-name="fs15" label-class-name="fs14">
                 <template slot-scope="scope">
-                  <router-link class="fs16 " style="color:#606266" to="/project/home">{{scope.row.project_name}}</router-link>
+                  <router-link class="fs16 " style="color:#606266" :to="'/project/home/'+scope.row.project_id">{{scope.row.project_name}}</router-link>
                 </template>
               </el-table-column>
               <el-table-column
@@ -193,8 +193,13 @@
   }
   .project-list .el-table__expanded-cell{
     padding: 20px;
+    background-color: #f9f9f9;
   }
   .add-project .el-dialog__body{
     padding:10px 20px;
+  }
+
+  .project-list .el-table__expanded-cell:hover {
+    background-color: #f9f9f9!important;
   }
 </style>
