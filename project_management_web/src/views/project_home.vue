@@ -60,7 +60,9 @@
            header-align="center"
            label="URL"
            prop="project_url">
-
+           <template slot-scope="scope" >
+             <a class="info" target="_blank" v-bind:href="scope.row.project_url">{{scope.row.project_url}}</a>
+           </template>
          </el-table-column>
          <el-table-column
            width="100"
