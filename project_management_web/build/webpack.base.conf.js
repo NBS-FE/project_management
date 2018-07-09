@@ -66,7 +66,6 @@ module.exports = {
         }
       }
     ]
-
   },
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue
