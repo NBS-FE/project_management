@@ -16,6 +16,7 @@
                  <div style="text-align: left" v-show="props.row.ProjectUrls&&props.row.ProjectUrls.length>0">网站入口：
                     <a class="btn btn-default margin-left-10 info" v-for="(projectUrl,index) in props.row.ProjectUrls" target="_blank" v-bind:href="projectUrl.project_url">{{projectUrl.project_url_name}}<i class="margin-left-5 el-icon-d-arrow-right"></i></a>
                  </div>
+
                   <div style="text-align: left" class="danger" v-show="props.row.ProjectUrls==null||props.row.ProjectUrls.length==0">
                     该项目暂无网站入口
                   </div>
