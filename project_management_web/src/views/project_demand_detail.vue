@@ -1,49 +1,43 @@
 <template>
   <div>
-    <div style="height:50px;background: #eee;margin: -20px;line-height: 50px" class="margin-bottom-20">
+    <div style="height:50px;background: #eee;margin: -20px;line-height: 50px" class="margin-bottom-10">
       <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
-        <el-breadcrumb-item class="margin-left-20">项目首页</el-breadcrumb-item>
+        <el-breadcrumb-item class="margin-left-20" :to="{ path: '/project/demand/'+projectId }">项目需求</el-breadcrumb-item>
+        <el-breadcrumb-item>需求详情</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div style="width: 1000px;padding:  10px 20px">
-      <div class="itme-title">项目基本信息
-        <el-button type="primary"  style="float: right;margin-top: -5px"  size="small" plain @click="projectFormOpen"><i class="fa fa-edit margin-right-5"></i>修改项目</el-button>
+      <div class="itme-title">需求基本信息
+        <el-button type="primary"  style="float: right;margin-top: -5px"  size="small" plain @click="projectFormOpen"><i class="fa fa-edit margin-right-5"></i>修改需求</el-button>
       </div>
       <div class="padding-10">
         <table class="table table-bordered  fs14 home-table" >
           <tbody>
           <tr>
-            <td width="150" class="info-title">项目名称</td>
-            <td colspan="3">{{projectInfo.project_name}}</td>
+            <td width="150" class="info-title">需求标题</td>
+            <td colspan="3">{{projectDemandInfo.demand_title}}</td>
           </tr>
           <tr>
-            <td width="150" class="info-title">公司名称</td>
-            <td colspan="3">{{projectInfo.project_company}}</td>
+            <td width="150" class="info-title">创建时间</td>
+            <td width="320">{{projectDemandInfo.demand_create_time | dateFormat('YYYY-MM-DD')}}</td>
+            <td width="150" class="info-title">需求状态</td>
+            <td >{{projectDemandInfo.demand_status}}</td>
           </tr>
+
+
           <tr>
-            <td width="150" class="info-title">项目周期</td>
-            <td colspan="3">{{projectInfo.project_begin}} 至 {{projectInfo.project_end}}</td>
-          </tr>
-          <tr>
-            <td width="150" class="info-title">项目版本</td>
-            <td width="320">{{projectInfo.project_version}}</td>
-            <td width="150" class="info-title">项目状态</td>
-            <td><span v-bind:class="{warning:projectInfo.project_status=='进行中',success:projectInfo.project_status=='已完成'}">{{projectInfo.project_status}}</span></td>
+            <td colspan="4" class="info-title">需求内容</td>
 
           </tr>
           <tr>
-            <td width="150" class="info-title">开发人员</td>
-            <td colspan="3">{{projectInfo.project_developer}}</td>
-          </tr>
-          <tr>
-            <td width="150" class="info-title">项目描述</td>
-            <td colspan="3">{{projectInfo.project_desc}}</td>
+            <td colspan="4"><div  style="min-height: 100px" v-html="projectDemandInfo.demand_content"></div></td>
+
           </tr>
           </tbody>
         </table>
       </div>
-      <div class="itme-title margin-top-20">项目网址列表
-        <el-button type="success"  style="float: right;margin-top: -5px"  size="small" plain @click="urlFormOpen('add')"><i class="fa fa-plus margin-right-5"></i>新增网址</el-button>
+     <!-- <div class="itme-title margin-top-20">项目网址列表
+        <el-button type="success"  style="float: right;margin-top: -5px" class=" margin-right-10" size="small" plain @click="urlFormOpen('add')"><i class="fa fa-plus margin-right-5"></i>新增网址</el-button>
 
       </div>
       <div class="padding-10">
@@ -82,7 +76,7 @@
           </el-table-column>
 
         </el-table>
-      </div>
+      </div>-->
       <el-dialog class="add-project" width="700px" title="修改项目" :visible.sync="projectFormVisible" :close-on-click-modal="false"  >
         <el-form :model="projectForm" :rules="projectRules" label-width="80px"  ref="projectForm"  style="padding: 0 20px">
           <el-form-item label="项目名称" prop="project_name" >
@@ -166,8 +160,9 @@
   export default {
     data() {
       return {
-        projectInfo:"",
+        projectDemandInfo:"",
         projectId:this.$route.params.projectId,
+        demandId:this.$route.params.demandId,
         projectFormVisible: false,
         urlFormVisible: false,
         urlDeleteVisible: false,
@@ -200,24 +195,23 @@
       }
     },
     created(){
-      this.getProjectInfo()
+      this.getProjectDemandInfo()
     },
     methods :{
-      getProjectInfo:function () {
+      getProjectDemandInfo:function () {
         var vm=this;
         vm.$http({
           method: 'get',
-          url: vm.config.baseUrl+'project/getProjectInfo',
+          url: vm.config.baseUrl+'project/getProjectDemandInfo',
           params:{
-            project_id:vm.projectId
+            demand_id:vm.demandId
           }
         }).then(function(response) {
           var data=response.data
           var code=data.code;
           if(code==0){
-            vm.projectInfo=data.projectInfo
-            vm.projectForm=JSON.parse(JSON.stringify(data.projectInfo));
-            vm.projectForm.project_period=[new Date(vm.projectForm.project_begin),new Date(vm.projectForm.project_end)];
+            vm.projectDemandInfo=data.projectDemandInfo
+            vm.demandForm=JSON.parse(JSON.stringify(data.projectDemandInfo));
           }else {
             console.log(data.msg)
           }

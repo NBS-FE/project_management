@@ -50,7 +50,7 @@
       return {
         projectInfo:"",
         projectId:this.$route.params.projectId,
-        activeRouter:'/project/home/'+this.$route.params.projectId
+        activeRouter:this.$route.fullPath
       }
     },
     created(){
