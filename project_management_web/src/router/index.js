@@ -4,7 +4,7 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    { path: '/', component: resolve => require(['../components/HelloWorld.vue'], resolve)},
+    { path: '/', component: resolve => require(['../views/project_list.vue'], resolve)},
     { path: '/projectlist', component: resolve => require(['../views/project_list.vue'], resolve)},
     { path: '/project', component: resolve => require(['../views/project.vue'], resolve),
       children:[
@@ -17,7 +17,7 @@ export default new Router({
       ]
     },
     { path: '/userList', component: resolve => require(['../views/user_list.vue'], resolve)},
-    { path: '/register', component: resolve => require(['../views/register.vue'], resolve)}
+    // { path: '/register', component: resolve => require(['../views/register.vue'], resolve)}
 
   ]
 })

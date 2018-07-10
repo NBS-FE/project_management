@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var projectDao=require('../dao/project')
 var projectUrlDao=require('../dao/project_url')
+var projectModuleDao = require('../dao/project_module')
 var projectUrlDemand=require('../dao/project_demand')
 
 /* GET users listing. */
@@ -39,6 +40,27 @@ router.post('/updateProjectUrl', function(req, res, next) {
 router.post('/deleteProjectUrl', function(req, res, next) {
     projectUrlDao.deleteProjectUrl(req, res, next);
 });
+//添加项目模块
+router.post('/addProjectModuel', function(req, res, next) {
+    projectModuleDao.insertModule(req, res, next);
+});
+
+router.get('/projectModuelList', function(req, res, next) {
+    projectModuleDao.queryList(req, res, next);
+});
+
+router.post('/updateProjectModuel', function(req, res, next) {
+    projectModuleDao.updateModel(req, res, next);
+});
+
+router.post('/deleteProjectModuel', function(req, res, next) {
+    projectModuleDao.deleteModel(req, res, next);
+});
+
+
+
+
+
 
 
 //新增需求
