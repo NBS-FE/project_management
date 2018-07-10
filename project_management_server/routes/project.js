@@ -27,7 +27,6 @@ router.get('/getProjectInfo', function(req, res, next) {
     projectDao.getProjectInfo(req, res, next);
 });
 
-
 //新增URL
 router.post('/addProjectUrl', function(req, res, next) {
     projectUrlDao.insertProjectUrl(req, res, next);
@@ -40,6 +39,7 @@ router.post('/updateProjectUrl', function(req, res, next) {
 router.post('/deleteProjectUrl', function(req, res, next) {
     projectUrlDao.deleteProjectUrl(req, res, next);
 });
+
 //添加项目模块
 router.post('/addProjectModuel', function(req, res, next) {
     projectModuleDao.insertModule(req, res, next);
@@ -56,11 +56,6 @@ router.post('/updateProjectModuel', function(req, res, next) {
 router.post('/deleteProjectModuel', function(req, res, next) {
     projectModuleDao.deleteModel(req, res, next);
 });
-
-
-
-
-
 
 
 //新增需求
