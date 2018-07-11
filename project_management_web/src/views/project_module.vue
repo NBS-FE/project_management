@@ -1,10 +1,16 @@
 <template>
-   <div style="width: 900px;padding:  10px 20px">
-     <el-row>
-       <el-button style="float:right" type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
-     </el-row>
-     <el-table :data="projectList" style="width: 100%;margin-top:10px;">
-       <el-table-column label="序号" type="index"></el-table-column>
+   <div>
+     <div style="background: #eee;height:50px;line-height:50px;margin:-20px;" class="margin-bottom-20">
+       <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
+         <el-breadcrumb-item class="margin-left-20">项目模块</el-breadcrumb-item>
+       </el-breadcrumb>
+       <el-button style="float:right" class="margin-top-10 margin-right-20" size="small" type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
+     </div>
+     <!--<el-row>
+       <el-button style="float:right"  type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
+     </el-row>-->
+     <el-table :data="projectList" border style="width: 100%;margin-top:10px;">
+       <el-table-column label="序号" width="60" type="index"></el-table-column>
        <el-table-column prop="module_name" label="模块名称"></el-table-column>
        <el-table-column prop="module_developer" label="开发人员"></el-table-column>
        <el-table-column label="操作">
@@ -14,7 +20,7 @@
          </template>
        </el-table-column>
      </el-table>
-     <el-dialog title="添加项目模块" :visible.sync="dialogTableVisible">
+     <el-dialog :title="dialogTitle" :visible.sync="dialogTableVisible">
        <el-form :model="modular">
          <el-form-item label="模块名称">
            <el-input  placeholder="请输入模块名称" v-model="modular.module_name"></el-input>
@@ -48,6 +54,7 @@
         projectList: [],
         dialogDeleteVisible: false,
         dialogTableVisible: false,
+        dialogTitle:'添加项目模块',
         delId:'',
         modular: {
           module_name: '',
@@ -83,11 +90,13 @@
         this.objType = type;
         if(type=='edit'){
           this.modular = obj;
+          this.dialogTitle = '修改项目模块';
         }else{
           this.modular = {
             module_name:'',
             module_developer:''
-          }
+          };
+          this.dialogTitle = '添加项目模块';
         }
 
       },
