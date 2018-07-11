@@ -1,6 +1,6 @@
 <template>
     <el-container>
-      <el-header class="p-header"><span class="header-title">项目管理系统</span></el-header>
+      <el-header class="p-header"><span class="header-title">研发部项目管理系统</span></el-header>
       <el-main>
         <div class="widget" style="width: 1000px;margin: 20px auto">
           <div class="widget-header" style="height: 45px">

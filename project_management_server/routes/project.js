@@ -3,7 +3,7 @@ var router = express.Router();
 var projectDao=require('../dao/project')
 var projectUrlDao=require('../dao/project_url')
 var projectModuleDao = require('../dao/project_module')
-var projectUrlDemand=require('../dao/project_demand')
+var projectDemandDao=require('../dao/project_demand')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -60,19 +60,22 @@ router.post('/deleteProjectModuel', function(req, res, next) {
 
 //新增需求
 router.post('/addProjectDemand', function(req, res, next) {
-    projectUrlDemand.insertProjectDemand(req, res, next);
+    projectDemandDao.insertProjectDemand(req, res, next);
 });
 //查询需求列表
 router.get('/getProjectDemandList', function(req, res, next) {
-    projectUrlDemand.getProjectDemandList(req, res, next);
+    projectDemandDao.getProjectDemandList(req, res, next);
+});
+router.post('/updateProjectDemand', function(req, res, next) {
+    projectDemandDao.updateProjectDemand(req, res, next);
 });
 //删除需求
 router.post('/deleteProjectDemand', function(req, res, next) {
-    projectUrlDemand.deleteProjectDemand(req, res, next);
+    projectDemandDao.deleteProjectDemand(req, res, next);
 });
 //获取需求详情
 router.get('/getProjectDemandInfo', function(req, res, next) {
-    projectUrlDemand.getProjectDemandInfo(req, res, next);
+    projectDemandDao.getProjectDemandInfo(req, res, next);
 });
 
 module.exports = router;

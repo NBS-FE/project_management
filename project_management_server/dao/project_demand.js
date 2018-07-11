@@ -63,9 +63,9 @@ exports.getProjectDemandList=function (req, res, next) {
  * @param res
  * @param next
  */
-exports.updateProjectUrl=function (req, res, next) {
+exports.updateProjectDemand=function (req, res, next) {
     var urlData=req.body;
-    projectUrlModel.update(urlData,{where:{project_url_id:urlData.project_url_id}})
+    projectDemandModel.update(urlData,{where:{demand_id:urlData.demand_id}})
         .then(function (result) {
             var resultData=undefined;
             if(result!=null){
@@ -76,7 +76,7 @@ exports.updateProjectUrl=function (req, res, next) {
             }
             jsonWrite(res, resultData);
         }).catch(function (err) {
-        console.log('project/updateProjectUrl error:' + err)
+        console.log('project/updateProjectDemand error:' + err)
     })
 
 }

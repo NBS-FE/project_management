@@ -8,7 +8,7 @@
     </div>
     <div style="width: 1000px;padding:  10px 20px">
       <div class="itme-title">需求基本信息
-        <el-button type="primary"  style="float: right;margin-top: -5px"  size="small" plain @click="projectFormOpen"><i class="fa fa-edit margin-right-5"></i>修改需求</el-button>
+        <el-button type="primary"  style="float: right;margin-top: -5px"  size="small" plain @click="demandFormOpen"><i class="fa fa-edit margin-right-5"></i>修改需求</el-button>
       </div>
       <div class="padding-10">
         <table class="table table-bordered  fs14 home-table" >
@@ -77,70 +77,54 @@
 
         </el-table>
       </div>-->
-      <el-dialog class="add-project" width="700px" title="修改项目" :visible.sync="projectFormVisible" :close-on-click-modal="false"  >
-        <el-form :model="projectForm" :rules="projectRules" label-width="80px"  ref="projectForm"  style="padding: 0 20px">
-          <el-form-item label="项目名称" prop="project_name" >
-            <el-input  placeholder="请输入项目名称" v-model="projectForm.project_name">
+      <el-dialog class="demand-panel" width="900px" title="修改需求" :visible.sync="demandFormVisible" :close-on-click-modal="false"  >
+        <el-form :model="demandForm" :rules="demandRules" label-width="80px"  ref="demandForm"  style="padding: 0 20px">
+          <el-form-item label="需求标题" prop="demand_title" >
+            <el-input  placeholder="请输入需求标题" v-model="demandForm.demand_title">
             </el-input>
           </el-form-item>
-          <el-form-item label="公司名称" prop="project_company" >
-            <el-input  placeholder="请输入公司名称" v-model="projectForm.project_company">
-            </el-input>
+
+          <el-form-item label="创建时间" prop="demand_create_time" >
+            <el-col :span="10">
+              <el-date-picker style="width: 100%"
+                              v-model="demandForm.demand_create_time"
+                              type="date"
+                              placeholder="请选择创建时间">
+              </el-date-picker>
+            </el-col>
+            <el-col  class="line text-right padding-right-10" :span="4">需求状态</el-col>
+            <el-col :span="10">
+              <el-select v-model="demandForm.demand_status" style="width: 100%" placeholder="请选择项目状态">
+                <el-option
+                  v-for="item in demandStatusOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-col>
           </el-form-item>
-          <el-form-item label="项目周期" prop="project_period" >
-            <el-date-picker style="width: 100%"
-                            v-model="projectForm.project_period"
-                            type="daterange"
-                            align="right"
-                            unlink-panels
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期">
-            </el-date-picker>
+          <el-form-item label="需求内容"  prop="demand_content">
+            <div class="demand-editor">
+              <quill-editor
+                style="height: 200px"
+                v-model="demandForm.demand_content"
+                ref="myQuillEditor"
+                :options="editorOption"
+                @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                @change="onEditorChange($event)">
+              </quill-editor>
+            </div>
+
           </el-form-item>
-          <el-form-item label="项目版本" prop="project_version" >
-            <el-input  placeholder="请输入项目版本" v-model="projectForm.project_version">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="开发人员" prop="project_developer" >
-            <el-input  placeholder="请输入开发人员" v-model="projectForm.project_developer">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="项目状态" prop="project_status" >
-            <el-select v-model="projectForm.project_status" style="width: 100%" placeholder="请选择项目状态">
-              <el-option
-                v-for="item in projectStatusOptions"
-                :key="item"
-                :label="item"
-                :value="item">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="项目介绍" prop="project_desc">
-            <el-input type="textarea" rows="3" placeholder="请输入项目介绍" v-model="projectForm.project_desc"></el-input>
-          </el-form-item>
+
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click.native="projectFormVisible = false">取消</el-button>
-          <el-button type="primary" @click.native="projectSubmit" >提交</el-button>
+          <el-button @click.native="demandFormVisible = false">取消</el-button>
+          <el-button type="primary" @click.native="demandSubmit" >提交</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="url-panel" width="700px" title="修改网址" :visible.sync="urlFormVisible" :close-on-click-modal="false"  >
-        <el-form :model="urlForm" :rules="urlRules" label-width="80px"  ref="urlForm"  style="padding: 0 20px">
-          <el-form-item label="网址名称" prop="project_url_name" >
-            <el-input  placeholder="请输入网址名称" v-model="urlForm.project_url_name">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="URL" prop="project_url" >
-            <el-input  placeholder="请输入URL" v-model="urlForm.project_url">
-            </el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click.native="urlFormVisible = false">取消</el-button>
-          <el-button type="primary" @click.native="urlSubmit" >提交</el-button>
-        </div>
-      </el-dialog>
+
       <el-dialog class="delete-panel" width="400px" title="删除网址" :visible.sync="urlDeleteVisible" :close-on-click-modal="false"  >
         <div class="fs16 danger">
           确定要删除该网址吗？
@@ -163,33 +147,31 @@
         projectDemandInfo:"",
         projectId:this.$route.params.projectId,
         demandId:this.$route.params.demandId,
-        projectFormVisible: false,
-        urlFormVisible: false,
-        urlDeleteVisible: false,
-        urlOptionType:"",
-        urlDeleteId:"",
-        projectStatusOptions:[
+        demandFormVisible: false,
+        demandStatusOptions:[
           '进行中','已完成'
         ],
-        projectForm: {
-          project_name: ''
+        demandForm: {
+          demand_title: ''
         },
-        projectRules: {
-          project_name: [
-            {required: true, message: '请输入项目名称', trigger: 'change'},
+        demandRules: {
+          demand_title: [
+            {required: true, message: '请输入需求标题', trigger: 'change'},
           ]
         },
-        urlForm: {
-          project_url_name: '',
-          project_url: ''
-        },
-        urlRules: {
-          project_url_name: [
-            {required: true, message: '请输入网址名称', trigger: 'change'}
-          ],
-          project_url: [
-            {required: true, message: '请输入网址URL', trigger: 'change'}
-          ]
+        editorOption:{
+          placeholder: '请输入项目内容',
+          modules:{
+            toolbar:[
+              ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+              [{ 'size': ['small', false, 'large', 'huge'] }],
+              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+              [{ 'color': [] }, { 'background': [] }],
+              [{ 'font': [] }],
+              [{ 'align': [] }],
+              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ]
+          }
         },
         urlOpenNum:0,
       }
@@ -219,31 +201,29 @@
           console.log(response)
         })
       },
-      projectFormOpen:function () {
-        this.projectFormVisible = true;
+      demandFormOpen:function () {
+        this.demandFormVisible = true;
       },
-      projectSubmit:function () {
+      demandSubmit:function () {
         var vm=this;
-        vm.$refs['projectForm'].validate((valid) => {
+        vm.$refs['demandForm'].validate((valid) => {
           if (valid) {
-            var projectInfo = JSON.parse(JSON.stringify(this.projectForm));
-            projectInfo.ProjectUrls=null;
-            if(projectInfo.project_period!=null&&projectInfo.project_period.length>1){
-              projectInfo.project_begin=vm.$moment(projectInfo.project_period[0]).format("YYYY-MM-DD");
-              projectInfo.project_end=vm.$moment(projectInfo.project_period[1]).format("YYYY-MM-DD");
+            var demandInfo = this.demandForm;
+            if(demandInfo.demand_create_time!=null&&demandInfo.demand_create_time>1){
+              demandInfo.demand_create_time=vm.$moment(demandInfo.demand_create_time).format("YYYY-MM-DD");
             }
-            console.log(projectInfo)
+            demandInfo.project_id=vm.projectId;
             vm.$http({
               method: 'POST',
-              url: this.config.baseUrl + 'project/updateProject',
-              data: projectInfo
+              url: this.config.baseUrl + 'project/updateProjectDemand',
+              data: demandInfo
             }).then(function (data) {
               var result = data.data;
               var response = result.code;
               if (response == 0) {
-                vm.projectFormVisible = false;
+                vm.demandFormVisible = false;
                 vm.$message({message: '提交成功！！', type: 'success'});
-                vm.getProjectInfo()
+                vm.getProjectDemandInfo()
               } else {
                 vm.$message.error('提交失败！！');
               }
@@ -353,5 +333,8 @@
   }
   .home-table tbody td{
     padding: 12px!important;
+  }
+  .demand-editor {
+    line-height: 20px;
   }
 </style>
