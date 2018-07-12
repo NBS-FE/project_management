@@ -4,11 +4,11 @@
        <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
          <el-breadcrumb-item class="margin-left-20">缺陷记录</el-breadcrumb-item>
        </el-breadcrumb>
-       <el-button type="success" class="margin-top-10 margin-right-20" size="small" style="float: right;" @click="demandFormOpen"  icon="el-icon-plus">新增缺陷</el-button>
+       <el-button type="success" class="margin-top-10 margin-right-20" size="small" style="float: right;" @click="bugFormOpen"  icon="el-icon-plus">新增缺陷</el-button>
      </div>
 
      <el-table
-         :data="projectDemandList"
+         :data="projectBugList"
          border
          style="width: 100%">
          <el-table-column
@@ -18,59 +18,78 @@
          >
          </el-table-column>
          <el-table-column
-           prop="demand_title"
-           label="需求标题"
+           prop="bug_title"
+           label="标题"
            >
          </el-table-column>
          <el-table-column
-           prop="demand_create_time"
+           prop="bug_level"
            width="150"
-           label="创建时间">
-           <template slot-scope="scope" >
-              {{scope.row.demand_create_time | dateFormat('YYYY-MM-DD')}}
-           </template>
+           label="严重程度">
          </el-table-column>
          <el-table-column
-           prop="demand_status"
+           prop="bug_priority"
            width="150"
-           label="需求状态">
-           <template slot-scope="scope" >
-             <span :class="{'warning':scope.row.demand_status=='进行中','success':scope.row.demand_status=='已完成','danger':scope.row.demand_status=='已取消'}" >{{scope.row.demand_status}}</span>
-
-           </template>
+           label="优先级">
          </el-table-column>
+       <el-table-column
+         prop="bug_status"
+         label="状态"
+       >
+       </el-table-column>
+       <el-table-column
+         prop="bug_handler"
+         label="处理人"
+       >
+       </el-table-column>
+       <el-table-column
+         prop="bug_creator"
+         label="创建人"
+       >
+       </el-table-column>
+       <el-table-column
+         prop="bug_create_time"
+         label="创建时间"
+       >
+         <template slot-scope="scope" >
+           {{scope.row.bug_create_time | dateFormat('YYYY-MM-DD')}}
+         </template>
+       </el-table-column>
          <el-table-column
-           width="160"
+           width="100"
            label="操作">
            <template slot-scope="scope" >
-             <router-link :to="{ path: '/project/demanddetail/'+projectId+'/'+scope.row.demand_id}">
-               <el-button icon="el-icon-search" size="small" type="primary">详情</el-button>
+             <router-link :to="{ path: '/project/bugdetail/'+projectId+'/'+scope.row.bug_id}">
+
+               <el-button icon="el-icon-search" size="small" type="primary" title="查看详情"  circle></el-button>
              </router-link>
              <!--<el-button type="primary" size="small" :to="{ path: '/project/demanddetail/'+scope.row.demand_id }" icon="el-icon-search">详情</el-button>-->
-             <el-button type="danger" size="small" @click="demandDeleteOpen(scope.row.demand_id)" icon="el-icon-delete"></el-button>
+             <el-button type="danger" size="small" @click="bugDeleteOpen(scope.row.bug_id)" title="删除缺陷" icon="el-icon-delete" circle></el-button>
            </template>
          </el-table-column>
        </el-table>
-     <el-dialog class="demand-panel" width="900px" title="新增需求" :visible.sync="demandFormVisible" :close-on-click-modal="false"  >
-       <el-form :model="demandForm" :rules="demandRules" label-width="80px"  ref="demandForm"  style="padding: 0 20px">
-         <el-form-item label="需求标题" prop="demand_title" >
-           <el-input  placeholder="请输入需求标题" v-model="demandForm.demand_title">
+     <el-dialog class="bug-panel" width="900px" title="新增缺陷" :visible.sync="bugFormVisible" :close-on-click-modal="false"  >
+       <el-form :model="bugForm" :rules="bugRules" label-width="80px"  ref="bugForm"  style="padding: 0 20px">
+         <el-form-item label="标题" prop="bug_title" >
+           <el-input  placeholder="请输入标题" v-model="bugForm.bug_title">
            </el-input>
          </el-form-item>
-
-         <el-form-item label="创建时间" prop="demand_create_time" >
+         <el-form-item label="严重程度" prop="bug_level" >
            <el-col :span="10">
-             <el-date-picker style="width: 100%"
-               v-model="demandForm.demand_create_time"
-               type="date"
-               placeholder="请选择创建时间">
-             </el-date-picker>
-           </el-col>
-           <el-col  class="line text-right padding-right-10" :span="4">需求状态</el-col>
-           <el-col :span="10">
-             <el-select v-model="demandForm.demand_status" style="width: 100%" placeholder="请选择项目状态">
+             <el-select v-model="bugForm.bug_level" clearable style="width: 100%" placeholder="请选择严重程度">
                <el-option
-                 v-for="item in demandStatusOptions"
+                 v-for="item in bugLevelOptions"
+                 :key="item"
+                 :label="item"
+                 :value="item">
+               </el-option>
+             </el-select>
+           </el-col>
+           <el-col   class="line text-right padding-right-10" :span="4">优先级</el-col>
+           <el-col :span="10">
+             <el-select v-model="bugForm.bug_priority" clearable style="width: 100%" placeholder="请选择优先级">
+               <el-option
+                 v-for="item in bugPriorityOptions"
                  :key="item"
                  :label="item"
                  :value="item">
@@ -78,15 +97,42 @@
              </el-select>
            </el-col>
          </el-form-item>
-         <el-form-item label="需求内容"  prop="demand_content">
+         <el-form-item label="创建人" prop="bug_creator" >
+           <el-col :span="10">
+             <el-input  placeholder="请输入创建人" v-model="bugForm.bug_creator"></el-input>
+           </el-col>
+           <el-col   class="line text-right padding-right-10" :span="4">处理人</el-col>
+           <el-col :span="10">
+             <el-input  placeholder="请输入处理人" v-model="bugForm.bug_handler"></el-input>
+           </el-col>
+         </el-form-item>
+         <el-form-item label="创建时间" prop="bug_create_time" >
+           <el-col :span="10">
+             <el-date-picker style="width: 100%"
+               v-model="bugForm.bug_create_time"
+               type="date"
+               placeholder="请选择创建时间">
+             </el-date-picker>
+           </el-col>
+           <el-col  class="line text-right padding-right-10" :span="4">缺陷状态</el-col>
+           <el-col :span="10">
+             <el-select v-model="bugForm.bug_status" style="width: 100%" placeholder="请选择缺陷状态">
+               <el-option
+                 v-for="item in bugStatusOptions"
+                 :key="item"
+                 :label="item"
+                 :value="item">
+               </el-option>
+             </el-select>
+           </el-col>
+         </el-form-item>
+         <el-form-item label="缺陷内容"  prop="bug_content">
            <div class="demand-editor">
              <quill-editor
-               style="height: 200px"
-               v-model="demandForm.demand_content"
+               style="height: 100px"
+               v-model="bugForm.bug_content"
                ref="myQuillEditor"
-               :options="editorOption"
-               @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-               @change="onEditorChange($event)">
+               :options="editorOption">
              </quill-editor>
            </div>
 
@@ -94,17 +140,17 @@
 
        </el-form>
        <div slot="footer" class="dialog-footer">
-         <el-button @click.native="demandFormVisible = false">取消</el-button>
-         <el-button type="primary" @click.native="demandSubmit" >提交</el-button>
+         <el-button @click.native="bugFormVisible = false">取消</el-button>
+         <el-button type="primary" @click.native="bugSubmit" >提交</el-button>
        </div>
      </el-dialog>
-     <el-dialog class="delete-panel" width="400px" title="删除项目需求" :visible.sync="demandDeleteVisible" :close-on-click-modal="false"  >
+     <el-dialog class="delete-panel" width="400px" title="删除项目需求" :visible.sync="bugDeleteVisible" :close-on-click-modal="false"  >
        <div class="fs16 danger">
-         确定要删除该项目需求吗？
+         确定要删除该缺陷吗？
        </div>
        <div slot="footer" class="dialog-footer">
-         <el-button @click.native="demandDeleteVisible = false">取消</el-button>
-         <el-button type="primary" @click.native="demandDelete" >提交</el-button>
+         <el-button @click.native="bugDeleteVisible = false">取消</el-button>
+         <el-button type="primary" @click.native="bugDelete" >提交</el-button>
        </div>
      </el-dialog>
    </div>
@@ -114,23 +160,23 @@
   export default {
     data() {
       return {
-        projectDemandList: [],
-        demandFormVisible: false,
-        demandDeleteVisible: false,
+        projectBugList: [],
+        bugFormVisible: false,
+        bugDeleteVisible: false,
         projectId:this.$route.params.projectId,
-        demandDeleteId:"",
-        demandStatusOptions:[
-          '进行中','已完成','已取消'
-        ],
-        demandForm: {
-          demand_title: ''
+        bugDeleteId:"",
+        bugStatusOptions:['待修复','已修复','已验证','已驳回','已关闭'],
+        bugPriorityOptions:['紧急','高','中','低','无关紧要'],
+        bugLevelOptions:['致命','严重','一般','提示','建议'],
+        bugForm: {
+          bug_title: ''
         },
-        demandRules: {
-          demand_title: [
+        bugRules: {
+          bug_title: [
             {required: true, message: '请输入需求标题', trigger: 'change'},
           ]
         },
-        demandOpenNum:0,
+        bugOpenNum:0,
         editorOption:{
           placeholder: '请输入项目内容',
           modules:{
@@ -148,58 +194,58 @@
       }
     },
     created(){
-      this.getProjectDemandList()
+      this.getProjectBugList()
     },
     methods :{
-      getProjectDemandList:function () {
+      getProjectBugList:function () {
         var vm=this;
         vm.$http({
           method: 'get',
-          url: vm.config.baseUrl+'project/getProjectDemandList',
+          url: vm.config.baseUrl+'project/getProjectBugList',
           params:{
             project_id:vm.projectId
           }
         }).then(function(response) {
           var data=response.data
-          vm.projectDemandList=data.projectDemandList
+          vm.projectBugList=data.projectBugList
 
         }).catch(function(response){
           console.log(response)
         })
       },
-      demandFormOpen:function () {
-        this.demandFormVisible = true;
-        this.demandOpenNum++;
-        if(this.demandOpenNum>1){
-          this.$refs['demandForm'].resetFields();
+      bugFormOpen:function () {
+        this.bugFormVisible = true;
+        this.bugOpenNum++;
+        if(this.bugOpenNum>1){
+          this.$refs['bugForm'].resetFields();
         }
-        this.demandForm={
-            demand_title:null,
-            demand_create_time:null,
-            demand_status:null
+        this.bugForm={
+            bug_title:null,
+            bug_create_time:null,
+            bug_status:null
         };
 
       },
-      demandSubmit:function () {
+      bugSubmit:function () {
         var vm=this;
-        vm.$refs['demandForm'].validate((valid) => {
+        vm.$refs['bugForm'].validate((valid) => {
           if (valid) {
-            var demandInfo = this.demandForm;
-            if(demandInfo.demand_create_time!=null&&demandInfo.demand_create_time>1){
-              demandInfo.demand_create_time=vm.$moment(demandInfo.demand_create_time).format("YYYY-MM-DD");
+            var bugInfo = this.bugForm;
+            if(bugInfo.bug_create_time!=null&&bugInfo.bug_create_time>1){
+              bugInfo.bug_create_time=vm.$moment(bugInfo.bug_create_time).format("YYYY-MM-DD");
             }
-            demandInfo.project_id=vm.projectId;
+            bugInfo.project_id=vm.projectId;
             vm.$http({
               method: 'POST',
-              url: this.config.baseUrl + 'project/addProjectDemand',
-              data: demandInfo
+              url: this.config.baseUrl + 'project/addProjectBug',
+              data: bugInfo
             }).then(function (data) {
               var result = data.data;
               var response = result.code;
               if (response == 0) {
-                vm.demandFormVisible = false;
+                vm.bugFormVisible = false;
                 vm.$message({message: '提交成功！！', type: 'success'});
-                vm.getProjectDemandList()
+                vm.getProjectBugList()
               } else {
                 vm.$message.error('提交失败！！');
               }
@@ -207,25 +253,25 @@
           }
         })
       },
-      demandDeleteOpen:function (delId) {
-        this.demandDeleteId=delId;
-        this.demandDeleteVisible = true;
+      bugDeleteOpen:function (delId) {
+        this.bugDeleteId=delId;
+        this.bugDeleteVisible = true;
       },
-      demandDelete:function () {
+      bugDelete:function () {
         var vm=this;
         vm.$http({
           method: 'POST',
-          url: this.config.baseUrl + 'project/deleteProjectDemand',
+          url: this.config.baseUrl + 'project/deleteProjectBug',
           data: {
-            demand_id:vm.demandDeleteId
+            bug_id:vm.bugDeleteId
           }
         }).then(function (data) {
           var result = data.data;
           var response = result.code;
           if (response == 0) {
-            vm.demandDeleteVisible = false;
+            vm.bugDeleteVisible = false;
             vm.$message({message: '删除成功！！', type: 'success'});
-            vm.getProjectDemandList()
+            vm.getProjectBugList()
           } else {
             vm.$message.error('提交失败！！');
           }

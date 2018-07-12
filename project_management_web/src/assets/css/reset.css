@@ -2706,3 +2706,7 @@ label {
 .el-message{
   top:50%;
 }
+.el-table__header thead th{
+  background-color: #f8f8f9;
+}
+
