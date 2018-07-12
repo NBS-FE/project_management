@@ -6,14 +6,14 @@
        </el-breadcrumb>
        <el-button type="success" class="margin-top-10 margin-right-20" size="small" style="float: right;" @click="demandFormOpen"  icon="el-icon-plus">新增需求</el-button>
      </div>
-     <tree-table :data="data" :columns="columns" border>
+    <!-- <tree-table :data="data" :columns="columns" border>
 
        <el-table-column label="操作" width="200">
          <template slot-scope="scope">
            <el-button type="text" @click="demandFormOpen">点击</el-button>
          </template>
        </el-table-column>
-     </tree-table>
+     </tree-table>-->
 
      <el-table
          :data="projectDemandList"
@@ -48,14 +48,14 @@
            </template>
          </el-table-column>
          <el-table-column
-           width="160"
+           width="100"
            label="操作">
            <template slot-scope="scope" >
              <router-link :to="{ path: '/project/demanddetail/'+projectId+'/'+scope.row.demand_id}">
-               <el-button icon="el-icon-search" size="small" type="primary">详情</el-button>
+               <el-button icon="el-icon-search" size="small" type="primary" title="查看详情" circle></el-button>
              </router-link>
              <!--<el-button type="primary" size="small" :to="{ path: '/project/demanddetail/'+scope.row.demand_id }" icon="el-icon-search">详情</el-button>-->
-             <el-button type="danger" size="small" @click="demandDeleteOpen(scope.row.demand_id)" icon="el-icon-delete"></el-button>
+             <el-button type="danger" size="small" @click="demandDeleteOpen(scope.row.demand_id)" title="删除需求" icon="el-icon-delete" circle></el-button>
            </template>
          </el-table-column>
        </el-table>
@@ -120,9 +120,9 @@
    </div>
 </template>
 <script>
-  import treeTable from '@/components/TreeTable'
+//  import treeTable from '@/components/TreeTable'
   export default {
-    components: { treeTable },
+//    components: { treeTable },
     data() {
       return {
         projectDemandList: [],

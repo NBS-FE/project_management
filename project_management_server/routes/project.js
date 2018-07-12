@@ -4,6 +4,7 @@ var projectDao=require('../dao/project')
 var projectUrlDao=require('../dao/project_url')
 var projectModuleDao = require('../dao/project_module')
 var projectDemandDao=require('../dao/project_demand')
+var projectBugDao=require('../dao/project_bug')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -76,6 +77,26 @@ router.post('/deleteProjectDemand', function(req, res, next) {
 //获取需求详情
 router.get('/getProjectDemandInfo', function(req, res, next) {
     projectDemandDao.getProjectDemandInfo(req, res, next);
+});
+
+//新增缺陷
+router.post('/addProjectBug', function(req, res, next) {
+    projectBugDao.insertProjectBug(req, res, next);
+});
+//查询缺陷列表
+router.get('/getProjectBugList', function(req, res, next) {
+    projectBugDao.getProjectBugList(req, res, next);
+});
+router.post('/updateProjectBug', function(req, res, next) {
+    projectBugDao.updateProjectBug(req, res, next);
+});
+//删除缺陷
+router.post('/deleteProjectBug', function(req, res, next) {
+    projectBugDao.deleteProjectBug(req, res, next);
+});
+//获取缺陷详情
+router.get('/getProjectBugInfo', function(req, res, next) {
+    projectBugDao.getProjectBugInfo(req, res, next);
 });
 
 module.exports = router;
