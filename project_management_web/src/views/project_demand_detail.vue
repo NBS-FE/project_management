@@ -111,8 +111,7 @@
                 v-model="demandForm.demand_content"
                 ref="myQuillEditor"
                 :options="editorOption"
-                @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-                @change="onEditorChange($event)">
+                >
               </quill-editor>
             </div>
 
@@ -125,15 +124,6 @@
         </div>
       </el-dialog>
 
-      <el-dialog class="delete-panel" width="400px" title="删除网址" :visible.sync="urlDeleteVisible" :close-on-click-modal="false"  >
-        <div class="fs16 danger">
-          确定要删除该网址吗？
-        </div>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click.native="urlDeleteVisible = false">取消</el-button>
-          <el-button type="primary" @click.native="urlDelete" >提交</el-button>
-        </div>
-      </el-dialog>
     </div>
   </div>
 
@@ -203,13 +193,14 @@
       },
       demandFormOpen:function () {
         this.demandFormVisible = true;
+        this.demandForm=JSON.parse(JSON.stringify( this.projectDemandInfo));
       },
       demandSubmit:function () {
         var vm=this;
         vm.$refs['demandForm'].validate((valid) => {
           if (valid) {
             var demandInfo = this.demandForm;
-            if(demandInfo.demand_create_time!=null&&demandInfo.demand_create_time>1){
+            if(demandInfo.demand_create_time!=null&&demandInfo.demand_create_time.length>1){
               demandInfo.demand_create_time=vm.$moment(demandInfo.demand_create_time).format("YYYY-MM-DD");
             }
             demandInfo.project_id=vm.projectId;

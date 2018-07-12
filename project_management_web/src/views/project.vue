@@ -21,6 +21,10 @@
                 <i class="el-icon-location-outline"></i>
                 <span slot="title">项目需求</span>
               </el-menu-item>
+            <el-menu-item :index="'/project/bug/'+projectId">
+              <i class="el-icon-view"></i>
+              <span slot="title">缺陷记录</span>
+            </el-menu-item>
             <el-menu-item :index="'/project/release/'+projectId">
               <i class="el-icon-document"></i>
               <span slot="title">发布记录</span>
