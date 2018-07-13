@@ -9,6 +9,15 @@
      <!--<el-row>
        <el-button style="float:right"  type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
      </el-row>-->
+     <tree-table  :data="projectList"  :columns="columns" border>
+       <el-table-column label="操作">
+         <template slot-scope="scope">
+           <el-button type="primary" title="编辑" size="small" @click="moduleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
+           <el-button type="danger" size="small" icon="el-icon-delete" @click="moduleDeleteOpen(scope.row.module_id)" circle></el-button>
+           <el-button type="success" size="small" icon="el-icon-plus" @click="sonModuleFormOpen(scope.row.module_id)" circle></el-button>
+         </template>
+       </el-table-column>
+     </tree-table>
      <el-table :data="projectList" border style="width: 100%;margin-top:10px;">
        <el-table-column label="序号" width="60" type="index"></el-table-column>
        <el-table-column prop="module_name" label="模块名称"></el-table-column>
@@ -43,20 +52,41 @@
          <el-button type="primary" @click="deleteSubmit">确定</el-button>
        </div>
      </el-dialog>
+     <el-dialog title="添加子模块" :visible.sync="dialogSonVisible">
+       <el-form :model="sonmodular">
+         <el-form-item label="子模块名称">
+           <el-input  placeholder="请输入子模块名称" v-model="sonmodular.module_name"></el-input>
+         </el-form-item>
+         <el-form-item label="开发人员">
+           <el-input  placeholder="请输入开发人员" v-model="sonmodular.module_developer"></el-input>
+         </el-form-item>
+       </el-form>
+       <div slot="footer" class="dialog-footer">
+         <el-button @click="dialogSonVisible = false">取消</el-button>
+         <el-button type="primary" @click="projectSubmit('son')">确定</el-button>
+       </div>
+     </el-dialog>
    </div>
 
 
 </template>
 <script>
+  import treeTable from '@/components/TreeTable'
   export default {
+    components: { treeTable },
     data() {
       return {
         projectList: [],
         dialogDeleteVisible: false,
         dialogTableVisible: false,
+        dialogSonVisible: false,
         dialogTitle:'添加项目模块',
         delId:'',
         modular: {
+          module_name: '',
+          module_developer:''
+        },
+        sonmodular:{
           module_name: '',
           module_developer:''
         },
@@ -65,7 +95,21 @@
             {required: true, message: '请输入项目名称', trigger: 'change'},
           ]
         },
-        projectOpenNum:0,
+        columns:[
+          /*{
+              text:'序号',
+              value:'$index',
+              width:150
+          },*/
+          {
+              text:'模块名称',
+              value:'module_name'
+          },
+          {
+              text:'开发人员',
+              value:'module_developer'
+          }
+        ]
       }
     },
     created(){
@@ -78,7 +122,7 @@
           method: 'get',
           url: vm.config.baseUrl+'project/projectModuelList'
         }).then(function(response) {
-          var data=response.data
+          var data=response.data;
           vm.projectList=data.projectList
 
         }).catch(function(response){
@@ -100,17 +144,29 @@
         }
 
       },
+      sonModuleFormOpen:function(){
+        this.dialogSonVisible = true;
+        this.sonmodular = {
+          module_name:'',
+          module_developer:''
+        };
+      },
       moduleDeleteOpen:function(deleteId){
         this.dialogDeleteVisible = true;
         this.delId = deleteId;
       },
-      projectSubmit:function () {
+      projectSubmit:function (type) {
         var vm=this;
         /*vm.$refs['projectForm'].validate((valid) => {
           if (valid) {*/
-            var projectInfo = this.modular;
+           var projectInfo;
+           if(type=='son'){
+             projectInfo = this.sonmodular;
+           }else{
+             projectInfo = this.modular;
+           }
             projectInfo.project_id = this.$route.params.projectId;
-            console.log(projectInfo)
+            console.log(projectInfo);
             var url = '';
             if(this.objType=='edit'){
               url = 'project/updateProjectModuel';
