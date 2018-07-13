@@ -7,7 +7,8 @@ var project = require('../model/project');
 var projectModule = sequelize.define('projectModule',{
     module_id : {type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true,unique : true},
     module_name: {type: Sequelize.STRING},
-    module_developer: {type: Sequelize.STRING}
+    module_developer: {type: Sequelize.STRING},
+    parent_id: {type: Sequelize.INTEGER}
 },{
     timestamps: false,
     underscored: true,

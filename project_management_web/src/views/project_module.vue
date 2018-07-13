@@ -30,9 +30,19 @@
        </el-table-column>
      </el-table>
      <el-dialog :title="dialogTitle" :visible.sync="dialogTableVisible">
-       <el-form :model="modular">
+       <el-form :model="modular"  :rules="rules" ref="modular" label-width="80px">
          <el-form-item label="模块名称">
            <el-input  placeholder="请输入模块名称" v-model="modular.module_name"></el-input>
+         </el-form-item>
+         <el-form-item label="模块名称">
+           <el-select v-model="modular.parent_id" placeholder="请选择父模块名称">
+             <el-option
+               v-for="item in parentList"
+               :key="item.module_id"
+               :label="item.module_name"
+               :value="item.module_id">
+             </el-option>
+           </el-select>
          </el-form-item>
          <el-form-item label="开发人员">
            <el-input  placeholder="请输入开发人员" v-model="modular.module_developer"></el-input>
@@ -77,6 +87,7 @@
     data() {
       return {
         projectList: [],
+        parentList: [],
         dialogDeleteVisible: false,
         dialogTableVisible: false,
         dialogSonVisible: false,
@@ -84,23 +95,22 @@
         delId:'',
         modular: {
           module_name: '',
-          module_developer:''
+          module_developer:'',
+          parent_id:''
         },
         sonmodular:{
           module_name: '',
           module_developer:''
         },
-        projectRules: {
-          project_name: [
+        rules: {
+          module_name: [
             {required: true, message: '请输入项目名称', trigger: 'change'},
+          ],
+          module_developer: [
+            {required: true, message: '请输入开发人员', trigger: 'change'}
           ]
         },
         columns:[
-          /*{
-              text:'序号',
-              value:'$index',
-              width:150
-          },*/
           {
               text:'模块名称',
               value:'module_name'
@@ -113,7 +123,8 @@
       }
     },
     created(){
-      this.getProjectList()
+      this.getProjectList();
+      this.getParentList();
     },
     methods :{
       getProjectList:function () {
@@ -124,10 +135,25 @@
         }).then(function(response) {
           var data=response.data;
           vm.projectList=data.projectList
-
         }).catch(function(response){
           console.log(response)
         })
+      },
+      getParentList: function(){
+          var vm=this;
+          vm.$http({
+            method: 'get',
+            url: vm.config.baseUrl+'project/parentProjectList'
+          }).then((response) => {
+            var data=response.data;
+            var status = data.code;
+            console.log(this.parentList);
+            if(status==0){
+              this.parentList=data.parentList;
+            }
+          }).catch(function(response){
+            console.log(response)
+          })
       },
       moduleFormOpen:function (type,obj) {
         this.dialogTableVisible = true;
@@ -157,15 +183,19 @@
       },
       projectSubmit:function (type) {
         var vm=this;
-        /*vm.$refs['projectForm'].validate((valid) => {
-          if (valid) {*/
+        vm.$refs['modular'].validate((valid) => {
+          if (valid) {
            var projectInfo;
-           if(type=='son'){
+           /*if(type=='son'){
              projectInfo = this.sonmodular;
            }else{
              projectInfo = this.modular;
-           }
+           }*/
+            projectInfo = this.modular;
             projectInfo.project_id = this.$route.params.projectId;
+            if(!projectInfo.parent_id){
+              projectInfo.parent_id = 0;
+            }
             console.log(projectInfo);
             var url = '';
             if(this.objType=='edit'){
@@ -188,8 +218,8 @@
                 vm.$message.error('提交失败！！');
               }
             })
-          /*}
-        })*/
+          }
+        })
       },
       deleteSubmit:function(){
         var vm=this;
