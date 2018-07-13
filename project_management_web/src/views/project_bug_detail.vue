@@ -48,6 +48,19 @@
             <td colspan="4"><div  style="min-height: 100px" v-html="projectBugInfo.bug_content"></div></td>
 
           </tr>
+          <tr>
+            <td colspan="4" class="info-title">缺陷处理</td>
+
+          </tr>
+          <tr>
+            <td colspan="4" style="min-height: 100px">
+              <div style="min-height: 100px">
+
+              </div>
+
+            </td>
+
+          </tr>
           </tbody>
         </table>
       </div>

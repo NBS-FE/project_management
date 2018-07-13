@@ -2,7 +2,26 @@
     <el-container style="height: 100%">
       <el-header class="p-header">
         <span class="header-title">{{projectInfo.project_name}}</span>
-        <el-button size="small" @click="returnPage" type="info" style="float: right;margin-top:15px " round><i class="fa fa-mail-reply margin-right-5"></i>返回</el-button>
+
+        <el-button size="small" @click="returnPage" class="" type="info" style="float: right;margin-top:15px " round><i class="fa fa-mail-reply margin-right-5"></i>返回</el-button>
+        <div class="header-right">
+          <div class="header-user-con">
+            <!--<div class="user-avator"><img src="../assets/img/user.png"></div>-->
+            <el-dropdown trigger="click" class="user-name" style="color:aliceblue;height: 60px;line-height: 60px">
+              <span class="el-dropdown-link user-avator " style="height: 60px;display: block" >
+                <img src="../assets/img/user.png">系统管理员<i class=" el-icon--right"></i>
+              </span>
+              <el-dropdown-menu  slot="dropdown">
+                <el-dropdown-item></el-dropdown-item>
+                <el-dropdown-item>狮子头</el-dropdown-item>
+                <el-dropdown-item>螺蛳粉</el-dropdown-item>
+                <el-dropdown-item>双皮奶</el-dropdown-item>
+                <el-dropdown-item>蚵仔煎</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </div>
+
       </el-header>
       <el-container>
         <el-aside width="200px">
@@ -114,5 +133,24 @@
     -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
     -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
     box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
+  }
+  .header-right{
+    float: right;
+    padding-right: 10px;
+  }
+  .header-user-con{
+    display: flex;
+    height: 60px;
+    align-items: center;
+  }
+  .user-name{
+    margin-left: 10px;
+  }
+
+  .user-avator img{
+    margin-right: 5px;
+    width:30px;
+    height:30px;
+    border-radius: 50%;
   }
 </style>
