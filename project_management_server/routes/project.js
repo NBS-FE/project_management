@@ -58,6 +58,10 @@ router.post('/deleteProjectModuel', function(req, res, next) {
     projectModuleDao.deleteModel(req, res, next);
 });
 
+router.get('/parentProjectList', function(req, res, next) {
+    projectModuleDao.parentProjectList(req, res, next);
+});
+
 
 //新增需求
 router.post('/addProjectDemand', function(req, res, next) {
