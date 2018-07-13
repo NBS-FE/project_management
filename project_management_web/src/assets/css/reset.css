@@ -2709,4 +2709,14 @@ label {
 .el-table__header thead th{
   background-color: #f8f8f9;
 }
+.line-container {
+  padding-left: 120px!important;
+}
+.line-container::after {
+  left:109px!important;
+}
+.line-container .item-tag {
+  left: -100px!important;
+  width: 80px!important;
+}
 

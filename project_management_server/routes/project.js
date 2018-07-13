@@ -98,5 +98,12 @@ router.post('/deleteProjectBug', function(req, res, next) {
 router.get('/getProjectBugInfo', function(req, res, next) {
     projectBugDao.getProjectBugInfo(req, res, next);
 });
-
+//新增缺陷处理记录
+router.post('/addProjectBugRecord', function(req, res, next) {
+    projectBugDao.insertProjectBugRecord(req, res, next);
+});
+//查询缺陷记录列表
+router.get('/getProjectBugRecordList', function(req, res, next) {
+    projectBugDao.getProjectBugRecordList(req, res, next);
+});
 module.exports = router;

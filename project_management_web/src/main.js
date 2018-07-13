@@ -16,7 +16,9 @@ import  VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import LightTimeline from 'vue-light-timeline';
 
+Vue.use(LightTimeline);
 Vue.use(VueQuillEditor)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
