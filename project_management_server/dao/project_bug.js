@@ -1,5 +1,6 @@
 
 var projectBugModel=require('../model/project_bug')
+var projectBugRecordModel=require('../model/project_bug_record')
 
 var jsonWrite = function (res, ret) {
     if(typeof ret === 'undefined') {
@@ -129,4 +130,52 @@ exports.getProjectBugInfo=function (req, res, next) {
         });
     }
 
+}
+/**
+ * 新增bug处理记录
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.insertProjectBugRecord=function (req, res, next) {
+    var bugRecordData=req.body;
+    projectBugRecordModel.create(bugRecordData)
+        .then(function (result) {
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    projectList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        }).catch(function (err) {
+        console.log('project/insertProjectBugRecord error:' + err)
+    })
+
+}
+/**
+ * 获取bug记录列表
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.getProjectBugRecordList=function (req, res, next) {
+    var bugId=req.query.bug_id;
+    if(bugId!=null&&bugId.length>0){
+        projectBugRecordModel.findAndCountAll({where:{bug_id:bugId},order: [['bug_record_id', 'DESC']]}).then(function (result) {
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    projectBugRecordList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        })}else {
+        res.json({
+            code:'1',
+            msg: '参数bug_id不能为空！！'
+        });
+    }
 }
