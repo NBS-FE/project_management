@@ -62,6 +62,10 @@ router.get('/parentProjectList', function(req, res, next) {
     projectModuleDao.parentProjectList(req, res, next);
 });
 
+router.get('/treeProjectList', function(req, res, next) {
+    projectModuleDao.treeProjectList(req, res, next);
+});
+
 
 //新增需求
 router.post('/addProjectDemand', function(req, res, next) {
