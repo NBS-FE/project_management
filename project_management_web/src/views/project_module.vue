@@ -177,9 +177,9 @@
         this.objType = type;
         if(type=='edit'){
           this.modular = obj;
-          if(obj.parent_id==0){
+          /*if(obj.parent_id==0){
             this.modular.parent_id='';
-          }
+          }*/
           this.dialogTitle = '修改项目模块';
         }else{
           this.modular = {
@@ -216,16 +216,17 @@
             if(!projectInfo.parent_id){
               projectInfo.parent_id = 0;
             }
+            projectInfo.children=[];
             console.log(projectInfo);
             var url = '';
-            if(this.objType=='edit'){
+            if(vm.objType=='edit'){
               url = 'project/updateProjectModuel';
             }else{
               url = 'project/addProjectModuel';
             }
             vm.$http({
               method: 'POST',
-              url: this.config.baseUrl + url,
+              url: vm.config.baseUrl + url,
               data: projectInfo
             }).then(function (data) {
               var result = data.data;
@@ -254,7 +255,8 @@
           if (response == 0) {
             vm.dialogDeleteVisible = false;
             vm.$message({message: '删除成功！！', type: 'success'});
-            vm.getProjectList()
+            vm.getTreeList();
+//            vm.getProjectList()
           } else {
             vm.$message.error('删除失败！！');
           }
