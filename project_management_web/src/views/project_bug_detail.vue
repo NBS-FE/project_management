@@ -122,8 +122,14 @@
           </el-form-item>
 
           <el-form-item label="缺陷内容" prop="bug_content" >
-            <el-input  placeholder="请输入缺陷内容" v-model="bugForm.bug_content">
-            </el-input>
+            <div class="demand-editor">
+              <quill-editor
+                style="height: 100px"
+                v-model="bugForm.bug_content"
+                ref="myQuillEditor"
+                :options="editorOption">
+              </quill-editor>
+            </div>
           </el-form-item>
 
         </el-form>
@@ -367,7 +373,8 @@
               if (response == 0) {
                 vm.bugRecordFormVisible = false;
                 vm.$message({message: '提交成功！！', type: 'success'});
-                vm.getProjectBugRecordList()
+                vm.getProjectBugRecordList();
+                vm.getProjectBugInfo();
               } else {
                 vm.$message.error('提交失败！！');
               }

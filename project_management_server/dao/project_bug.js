@@ -23,17 +23,31 @@ var jsonWrite = function (res, ret) {
  */
 exports.insertProjectBug=function (req, res, next) {
     var bugData=req.body;
+    var resultData=undefined;
     projectBugModel.create(bugData)
         .then(function (result) {
-            var resultData=undefined;
+
             if(result!=null){
-                resultData={
-                    projectList:result.rows,
-                    count:result.count
+                resultData= {
+                    projectBug:result
                 }
+                projectBugRecordModel.create({
+                    bug_record_creator:result.bug_creator,
+                    bug_record_create_time:result.bug_create_time,
+                    bug_record_status:'新建',
+                    bug_id:result.bug_id
+                })
             }
-            jsonWrite(res, resultData);
-        }).catch(function (err) {
+
+        }).then(function (resultRecord) {
+        if(resultRecord!=null){
+            resultData={
+                projectList:result.rows,
+                count:result.count
+            }
+        }
+        jsonWrite(res, resultData);
+    }).catch(function (err) {
         console.log('project/insertProjectBug error:' + err)
     })
 
@@ -139,17 +153,24 @@ exports.getProjectBugInfo=function (req, res, next) {
  */
 exports.insertProjectBugRecord=function (req, res, next) {
     var bugRecordData=req.body;
+    var resultData=undefined;
     projectBugRecordModel.create(bugRecordData)
         .then(function (result) {
-            var resultData=undefined;
+
             if(result!=null){
                 resultData={
-                    projectList:result.rows,
-                    count:result.count
+                    projectBug:result
                 }
+                var bugData={
+                    bug_id:result.bug_id,
+                    bug_status:result.bug_record_status
+                }
+                projectBugModel.update(bugData,{where:{bug_id:bugData.bug_id}})
             }
-            jsonWrite(res, resultData);
-        }).catch(function (err) {
+
+        }).then(function (result) {
+        jsonWrite(res, resultData);
+    }).catch(function (err) {
         console.log('project/insertProjectBugRecord error:' + err)
     })
 

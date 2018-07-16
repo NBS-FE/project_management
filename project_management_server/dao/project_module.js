@@ -84,3 +84,14 @@ exports.parentProjectList = function(req, res, next){
     })
 }
 
+exports.testProjectList = function(req, res, next){
+    projectModuleModel.findAll({where:{parent_id:0}}).then(function(result){
+        var resultData=undefined;
+        if(result!=null){
+            resultData={
+                parentList:result
+            }
+            jsonWrite(res, resultData);
+        }
+    })
+}

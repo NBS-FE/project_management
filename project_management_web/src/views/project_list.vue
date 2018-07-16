@@ -11,10 +11,9 @@
               </span>
               <el-dropdown-menu  slot="dropdown">
                 <el-dropdown-item></el-dropdown-item>
-                <el-dropdown-item>狮子头</el-dropdown-item>
-                <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                <el-dropdown-item>双皮奶</el-dropdown-item>
-                <el-dropdown-item>蚵仔煎</el-dropdown-item>
+                <el-dropdown-item><i class="fa fa-user margin-right-5 info"></i>用户管理</el-dropdown-item>
+                <el-dropdown-item><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
+                <el-dropdown-item><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
