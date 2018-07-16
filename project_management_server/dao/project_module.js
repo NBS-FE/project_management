@@ -84,14 +84,54 @@ exports.parentProjectList = function(req, res, next){
     })
 }
 
+<<<<<<< Updated upstream
 exports.testProjectList = function(req, res, next){
     projectModuleModel.findAll({where:{parent_id:0}}).then(function(result){
         var resultData=undefined;
         if(result!=null){
             resultData={
                 parentList:result
+=======
+exports.treeProjectList = function(req, res, next){
+    var allMenu= [];
+    function treeNode(module_id, parent_id, module_name, module_developer, project_id, children) {
+        this.module_id = module_id;
+        this.parent_id = parent_id;
+        this.module_name = module_name;
+        this.project_id = project_id;
+        this.module_developer = module_developer;
+        this.children = children;
+    }
+    function getDFSTree(data, pid) {
+        var treelist = [];
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].parent_id == pid) {
+                var tree = new treeNode(data[i].module_id,
+                    data[i].parent_id,
+                    data[i].module_name,
+                    data[i].module_developer,
+                    data[i].project_id,
+                    getDFSTree(data, data[i].module_id));
+                treelist.push(tree);
+            }
+        }
+        return treelist;
+    }
+    projectModuleModel.findAndCountAll().then(function(result){
+        if(result!=null){
+            allMenu = result.rows;
+            var tree = getDFSTree(allMenu, 0);
+            var resultData = {
+                treeList: tree
+>>>>>>> Stashed changes
             }
             jsonWrite(res, resultData);
         }
     })
+<<<<<<< Updated upstream
 }
+=======
+
+}
+
+>>>>>>> Stashed changes
