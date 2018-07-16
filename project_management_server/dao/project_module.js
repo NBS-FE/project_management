@@ -84,14 +84,6 @@ exports.parentProjectList = function(req, res, next){
     })
 }
 
-<<<<<<< Updated upstream
-exports.testProjectList = function(req, res, next){
-    projectModuleModel.findAll({where:{parent_id:0}}).then(function(result){
-        var resultData=undefined;
-        if(result!=null){
-            resultData={
-                parentList:result
-=======
 exports.treeProjectList = function(req, res, next){
     var allMenu= [];
     function treeNode(module_id, parent_id, module_name, module_developer, project_id, children) {
@@ -123,15 +115,11 @@ exports.treeProjectList = function(req, res, next){
             var tree = getDFSTree(allMenu, 0);
             var resultData = {
                 treeList: tree
->>>>>>> Stashed changes
             }
             jsonWrite(res, resultData);
         }
     })
-<<<<<<< Updated upstream
-}
-=======
 
 }
 
->>>>>>> Stashed changes
+
