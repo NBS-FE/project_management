@@ -9,16 +9,16 @@
      <!--<el-row>
        <el-button style="float:right"  type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
      </el-row>-->
-     <tree-table  :data="projectList"  :columns="columns" border>
+     <tree-table  :data="treeList"  :columns="columns" border>
        <el-table-column label="操作">
          <template slot-scope="scope">
            <el-button type="primary" title="编辑" size="small" @click="moduleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
            <el-button type="danger" size="small" icon="el-icon-delete" @click="moduleDeleteOpen(scope.row.module_id)" circle></el-button>
-           <el-button type="success" size="small" icon="el-icon-plus" @click="sonModuleFormOpen(scope.row.module_id)" circle></el-button>
+           <el-button type="success" size="small" icon="el-icon-plus" @click="moduleFormOpen('add',null,scope.row.module_id)" circle></el-button>
          </template>
        </el-table-column>
      </tree-table>
-     <el-table :data="projectList" border style="width: 100%;margin-top:10px;">
+     <!--<el-table :data="projectList" border style="width: 100%;margin-top:10px;">
        <el-table-column label="序号" width="60" type="index"></el-table-column>
        <el-table-column prop="module_name" label="模块名称"></el-table-column>
        <el-table-column prop="module_developer" label="开发人员"></el-table-column>
@@ -28,13 +28,13 @@
            <el-button type="danger" size="small" icon="el-icon-delete" @click="moduleDeleteOpen(scope.row.module_id)" circle></el-button>
          </template>
        </el-table-column>
-     </el-table>
+     </el-table>-->
      <el-dialog :title="dialogTitle" :visible.sync="dialogTableVisible">
        <el-form :model="modular"  :rules="rules" ref="modular" label-width="80px">
          <el-form-item label="模块名称">
            <el-input  placeholder="请输入模块名称" v-model="modular.module_name"></el-input>
          </el-form-item>
-         <el-form-item label="模块名称">
+         <!--<el-form-item label="模块名称">
            <el-select v-model="modular.parent_id" placeholder="请选择父模块名称">
              <el-option
                v-for="item in parentList"
@@ -43,7 +43,7 @@
                :value="item.module_id">
              </el-option>
            </el-select>
-         </el-form-item>
+         </el-form-item>-->
          <el-form-item label="开发人员">
            <el-input  placeholder="请输入开发人员" v-model="modular.module_developer"></el-input>
          </el-form-item>
@@ -88,6 +88,7 @@
       return {
         projectList: [],
         parentList: [],
+        treeList: [],
         dialogDeleteVisible: false,
         dialogTableVisible: false,
         dialogSonVisible: false,
@@ -125,6 +126,7 @@
     created(){
       this.getProjectList();
       this.getParentList();
+      this.getTreeList();
     },
     methods :{
       getProjectList:function () {
@@ -135,6 +137,21 @@
         }).then(function(response) {
           var data=response.data;
           vm.projectList=data.projectList
+        }).catch(function(response){
+          console.log(response)
+        })
+      },
+      getTreeList:function(){
+        var vm=this;
+        vm.$http({
+          method: 'get',
+          url: vm.config.baseUrl+'project/treeProjectList'
+        }).then(function(response) {
+          var data=response.data;
+          var status = data.code;;
+          if(status==0){
+            vm.treeList=data.treeList
+          }
         }).catch(function(response){
           console.log(response)
         })
@@ -155,11 +172,14 @@
             console.log(response)
           })
       },
-      moduleFormOpen:function (type,obj) {
+      moduleFormOpen:function (type,obj,id) {
         this.dialogTableVisible = true;
         this.objType = type;
         if(type=='edit'){
           this.modular = obj;
+          if(obj.parent_id==0){
+            this.modular.parent_id='';
+          }
           this.dialogTitle = '修改项目模块';
         }else{
           this.modular = {
@@ -167,6 +187,11 @@
             module_developer:''
           };
           this.dialogTitle = '添加项目模块';
+          if(id){
+            this.modular.parent_id = id;
+            this.dialogTitle = '添加项子模块';
+          }
+
         }
 
       },
@@ -186,11 +211,6 @@
         vm.$refs['modular'].validate((valid) => {
           if (valid) {
            var projectInfo;
-           /*if(type=='son'){
-             projectInfo = this.sonmodular;
-           }else{
-             projectInfo = this.modular;
-           }*/
             projectInfo = this.modular;
             projectInfo.project_id = this.$route.params.projectId;
             if(!projectInfo.parent_id){
@@ -213,7 +233,8 @@
               if (response == 0) {
                 vm.dialogTableVisible = false;
                 vm.$message({message: '提交成功！！', type: 'success'});
-                vm.getProjectList()
+                vm.getTreeList();
+                // vm.getProjectList()
               } else {
                 vm.$message.error('提交失败！！');
               }
