@@ -45,7 +45,7 @@
 
           </tr>
           <tr>
-            <td colspan="4"><div  style="min-height: 100px" v-html="projectBugInfo.bug_content"></div></td>
+            <td colspan="4"><div  style="min-height: 100px" class="bug-content" v-html="projectBugInfo.bug_content"></div></td>
 
           </tr>
 
@@ -123,12 +123,13 @@
 
           <el-form-item label="缺陷内容" prop="bug_content" >
             <div class="demand-editor">
-              <quill-editor
+              <UE :defaultMsg='uecontent' :config=ueconfig ref="ue" ></UE>
+              <!--<quill-editor
                 style="height: 100px"
                 v-model="bugForm.bug_content"
                 ref="myQuillEditor"
                 :options="editorOption">
-              </quill-editor>
+              </quill-editor>-->
             </div>
           </el-form-item>
 
@@ -196,9 +197,18 @@
 
 </template>
 <script>
+  import UE from '@/components/ue.vue';
   export default {
+    components: {UE},
     data() {
       return {
+        uecontent:"",
+        ueconfig: {
+          initialFrameWidth: null,
+          initialFrameHeight: 200,
+          wordCount: false,
+          toolbars:this.config.ueditorToolbar
+        },
         projectBugInfo:"",
         projectId:this.$route.params.projectId,
         bugId:this.$route.params.bugId,
@@ -265,6 +275,7 @@
           if(code==0){
             vm.projectBugInfo=data.projectBugInfo
             vm.bugForm=JSON.parse(JSON.stringify(data.projectBugInfo));
+            vm.uecontent=vm.bugForm.bug_content;
           }else {
             console.log(data.msg)
           }
@@ -318,6 +329,7 @@
         vm.$refs['bugForm'].validate((valid) => {
           if (valid) {
             var bugInfo = this.bugForm;
+            bugInfo.bug_content=vm.$refs.ue.getUEContent();
             if(bugInfo.bug_create_time!=null&&bugInfo.bug_create_time.length>1){
               bugInfo.bug_create_time=vm.$moment(bugInfo.bug_create_time).format("YYYY-MM-DD HH:mm:ss");
             }
@@ -420,5 +432,8 @@
   }
   .demand-editor {
     line-height: 20px;
+  }
+  .bug-content table td{
+    border: 1px solid #ddd;
   }
 </style>

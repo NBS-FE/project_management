@@ -1,7 +1,8 @@
 <template>
     <el-container style="height: 100%">
       <el-header class="p-header">
-        <span class="header-title">{{projectInfo.project_name}}</span>
+
+        <span style="cursor: pointer" class="header-title" @click="returnHomePage">{{projectInfo.project_name}}</span>
 
         <el-button size="small" @click="returnPage" class="" type="info" style="float: right;margin-top:15px " round><i class="fa fa-mail-reply margin-right-5"></i>返回</el-button>
         <div class="header-right">
@@ -106,6 +107,11 @@
       returnPage:function () {
         this.$router.push({ path: '/projectlist' })
       },
+      returnHomePage:function () {
+          var homePath='/project/home/'+this.projectId;
+        this.$router.push({ path: homePath });
+        this.activeRouter=homePath
+      },
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
@@ -127,6 +133,9 @@
     font-size: 23px;
     margin-left: 10px;
     letter-spacing:8px;
+  }
+  .header-title:hover,.header-title:focus{
+    color: aliceblue;
   }
    .el-menu-left.el-menu {
     height: 100%;

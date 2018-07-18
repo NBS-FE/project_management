@@ -10,7 +10,7 @@
        <el-button style="float:right"  type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
      </el-row>-->
      <tree-table  :data="treeList"  :columns="columns" border>
-       <el-table-column label="操作">
+       <el-table-column label="操作" width="160">
          <template slot-scope="scope">
            <el-button type="primary" title="编辑" size="small" @click="moduleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
            <el-button type="danger" size="small" icon="el-icon-delete" @click="moduleDeleteOpen(scope.row.module_id)" circle></el-button>
