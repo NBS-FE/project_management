@@ -1,5 +1,5 @@
 <template>
-   <div >
+   <div class="margin-bottom-50">
      <div style="height:50px;background: #eee;margin: -20px;line-height: 50px" class="margin-bottom-20">
        <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
          <el-breadcrumb-item class="margin-left-20">缺陷记录</el-breadcrumb-item>
@@ -10,7 +10,7 @@
      <el-table
          :data="projectBugList"
          border
-         style="width: 100%">
+         style="width: 100%;">
          <el-table-column
            label="序号"
            width="60"
@@ -128,12 +128,14 @@
          </el-form-item>
          <el-form-item label="缺陷内容"  prop="bug_content">
            <div class="demand-editor">
-             <quill-editor
+             <!--<ueditor :content=uetest :config=ueconfig :id="ue1"></ueditor>-->
+             <UE :defaultMsg='uetest' :config=ueconfig ref="ue" ></UE>
+             <!--<quill-editor
                style="height: 100px"
                v-model="bugForm.bug_content"
                ref="myQuillEditor"
                :options="editorOption">
-             </quill-editor>
+             </quill-editor>-->
            </div>
 
          </el-form-item>
@@ -156,10 +158,18 @@
    </div>
 </template>
 <script>
-
+  import UE from '@/components/ue.vue';
   export default {
+    components: {UE},
     data() {
       return {
+        uetest:"",
+        ueconfig: {
+          initialFrameWidth: null,
+          initialFrameHeight: 200,
+          wordCount: false,
+          toolbars: this.config.ueditorToolbar
+        },
         projectBugList: [],
         bugFormVisible: false,
         bugDeleteVisible: false,
@@ -219,10 +229,11 @@
         if(this.bugOpenNum>1){
           this.$refs['bugForm'].resetFields();
         }
-        this.bugForm={
-            bug_title:null,
-            bug_create_time:null,
-            bug_status:null
+        this.bugForm= {
+          bug_title: null,
+          bug_create_time: null,
+          bug_status: null,
+          bug_content: ""
         };
 
       },
@@ -231,6 +242,7 @@
         vm.$refs['bugForm'].validate((valid) => {
           if (valid) {
             var bugInfo = this.bugForm;
+            bugInfo.bug_content=vm.$refs.ue.getUEContent();
             if(bugInfo.bug_create_time!=null&&bugInfo.bug_create_time>1){
               bugInfo.bug_create_time=vm.$moment(bugInfo.bug_create_time).format("YYYY-MM-DD");
             }
@@ -305,5 +317,8 @@
   }
   .demand-editor {
     line-height: 20px;
+  }
+  .edui-editor{
+    z-index: 9999!important;
   }
 </style>

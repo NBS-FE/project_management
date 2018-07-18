@@ -17,6 +17,10 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import LightTimeline from 'vue-light-timeline';
+import '../static/ueditor/ueditor.config'
+import '../static/ueditor/ueditor.all.min'
+import '../static/ueditor/lang/zh-cn/zh-cn'
+import '../static/ueditor/ueditor.parse.min'
 
 Vue.use(LightTimeline);
 Vue.use(VueQuillEditor)

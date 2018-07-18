@@ -30,8 +30,7 @@
 
           </tr>
           <tr>
-            <td colspan="4"><div  style="min-height: 100px" v-html="projectDemandInfo.demand_content"></div></td>
-
+            <td colspan="4"><div  style="min-height: 100px" class="demand-content" v-html="projectDemandInfo.demand_content"></div></td>
           </tr>
           </tbody>
         </table>
@@ -106,13 +105,14 @@
           </el-form-item>
           <el-form-item label="需求内容"  prop="demand_content">
             <div class="demand-editor">
-              <quill-editor
+              <UE :defaultMsg='uecontent' :config=ueconfig ref="ue" ></UE>
+              <!--<quill-editor
                 style="height: 200px"
                 v-model="demandForm.demand_content"
                 ref="myQuillEditor"
                 :options="editorOption"
                 >
-              </quill-editor>
+              </quill-editor>-->
             </div>
 
           </el-form-item>
@@ -131,9 +131,18 @@
 
 </template>
 <script>
+  import UE from '@/components/ue.vue';
   export default {
+    components: {UE},
     data() {
       return {
+        uecontent:"",
+        ueconfig: {
+          initialFrameWidth: null,
+          initialFrameHeight: 200,
+          wordCount: false,
+          toolbars:this.config.ueditorToolbar
+        },
         projectDemandInfo:"",
         projectId:this.$route.params.projectId,
         demandId:this.$route.params.demandId,
@@ -184,6 +193,7 @@
           if(code==0){
             vm.projectDemandInfo=data.projectDemandInfo
             vm.demandForm=JSON.parse(JSON.stringify(data.projectDemandInfo));
+            vm.uecontent=vm.demandForm.demand_content;
           }else {
             console.log(data.msg)
           }
@@ -203,6 +213,7 @@
             if(demandInfo.demand_create_time!=null&&demandInfo.demand_create_time.length>1){
               demandInfo.demand_create_time=vm.$moment(demandInfo.demand_create_time).format("YYYY-MM-DD");
             }
+            demandInfo.demand_content=vm.$refs.ue.getUEContent();
             demandInfo.project_id=vm.projectId;
             vm.$http({
               method: 'POST',
@@ -327,5 +338,8 @@
   }
   .demand-editor {
     line-height: 20px;
+  }
+  .demand-content table td{
+    border: 1px solid #ddd;
   }
 </style>

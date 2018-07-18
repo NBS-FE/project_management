@@ -90,14 +90,15 @@
          </el-form-item>
          <el-form-item label="需求内容"  prop="demand_content">
            <div class="demand-editor">
-             <quill-editor
+             <UE :defaultMsg='uecontent' :config=ueconfig ref="ue" ></UE>
+             <!--<quill-editor
                style="height: 200px"
                v-model="demandForm.demand_content"
                ref="myQuillEditor"
                :options="editorOption"
                @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                @change="onEditorChange($event)">
-             </quill-editor>
+             </quill-editor>-->
            </div>
 
          </el-form-item>
@@ -120,11 +121,18 @@
    </div>
 </template>
 <script>
-//  import treeTable from '@/components/TreeTable'
+  import UE from '@/components/ue.vue';
   export default {
-//    components: { treeTable },
+    components: {UE},
     data() {
       return {
+        uecontent:"",
+        ueconfig: {
+          initialFrameWidth: null,
+          initialFrameHeight: 200,
+          wordCount: false,
+          toolbars: this.config.ueditorToolbar
+        },
         projectDemandList: [],
         demandFormVisible: false,
         demandDeleteVisible: false,
@@ -301,6 +309,7 @@
         vm.$refs['demandForm'].validate((valid) => {
           if (valid) {
             var demandInfo = this.demandForm;
+            demandInfo.demand_content=vm.$refs.ue.getUEContent();;
             if(demandInfo.demand_create_time!=null&&demandInfo.demand_create_time>1){
               demandInfo.demand_create_time=vm.$moment(demandInfo.demand_create_time).format("YYYY-MM-DD");
             }
@@ -376,4 +385,5 @@
   .demand-editor {
     line-height: 20px;
   }
+
 </style>
