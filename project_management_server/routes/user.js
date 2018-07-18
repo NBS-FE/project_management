@@ -12,8 +12,16 @@ router.get('/getUserList', function(req, res, next) {
     userDao.queryList(req, res, next);
 });
 
-router.get('/register', function(req, res, next) {
-    userDao.queryList(req, res, next);
+router.post('/register', function(req, res, next) {
+    userDao.register(req, res, next);
+});
+
+router.post('/updateUser', function(req, res, next) {
+    userDao.updateUser(req, res, next);
+});
+
+router.post('/deleteUser', function(req, res, next) {
+    userDao.deleteUser(req, res, next);
 });
 
 

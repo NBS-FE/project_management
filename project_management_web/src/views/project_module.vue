@@ -10,7 +10,8 @@
        <el-button style="float:right"  type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
      </el-row>-->
      <tree-table  :data="treeList"  :columns="columns" border>
-       <el-table-column label="操作" width="160">
+       <!--<el-table-column label="操作" width="160">-->
+       <el-table-column label="操作" width="150">
          <template slot-scope="scope">
            <el-button type="primary" title="编辑" size="small" @click="moduleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
            <el-button type="danger" size="small" icon="el-icon-delete" @click="moduleDeleteOpen(scope.row.module_id)" circle></el-button>
@@ -31,7 +32,7 @@
      </el-table>-->
      <el-dialog :title="dialogTitle" :visible.sync="dialogTableVisible">
        <el-form :model="modular"  :rules="rules" ref="modular" label-width="80px">
-         <el-form-item label="模块名称">
+         <el-form-item label="模块名称" prop="module_name">
            <el-input  placeholder="请输入模块名称" v-model="modular.module_name"></el-input>
          </el-form-item>
          <!--<el-form-item label="模块名称">
@@ -44,7 +45,7 @@
              </el-option>
            </el-select>
          </el-form-item>-->
-         <el-form-item label="开发人员">
+         <el-form-item label="开发人员" prop="module_developer">
            <el-input  placeholder="请输入开发人员" v-model="modular.module_developer"></el-input>
          </el-form-item>
        </el-form>

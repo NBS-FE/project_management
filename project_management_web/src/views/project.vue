@@ -14,7 +14,7 @@
               </span>
               <el-dropdown-menu  slot="dropdown">
                 <el-dropdown-item></el-dropdown-item>
-                <el-dropdown-item><i class="fa fa-user margin-right-5 info"></i>用户管理</el-dropdown-item>
+                <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>用户管理</el-dropdown-item>
                 <el-dropdown-item><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
                 <el-dropdown-item><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
 
@@ -100,6 +100,9 @@
         }).catch(function(response){
           console.log(response)
         })
+      },
+      jumpUser:function () {
+        this.$router.push({ path: '/userList' })
       },
       returnPage:function () {
         this.$router.push({ path: '/projectlist' })
