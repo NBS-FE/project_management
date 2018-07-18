@@ -27,7 +27,9 @@ var jsonWrite = function (res, ret) {
 
 module.exports = {
     queryList:function (req, res, next) {
-        userModel.findAndCountAll().then(function (result) {
+        var params = req.query;
+        console.log(params.currentPage);
+        userModel.findAndCountAll({offset:(params.currentPage-1)*10,limit:10}).then(function (result) {
             var resultData=undefined;
             if(result!=null){
                 resultData={
@@ -54,6 +56,32 @@ module.exports = {
     register:function(req, res, next){
         var params = req.body;
         userModel.create({user_name:params.user_name,user_phone:params.user_phone,user_email:params.user_email,user_password:params.user_password}).then(function(result){
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    userList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        })
+    },
+    updateUser:function (req, res, next) {
+        var params = req.body;
+        userModel.update(params,{where:{user_id:params.user_id}}).then(function (result) {
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    userList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        })
+    },
+    deleteUser:function (req, res, next) {
+        var params = req.body;
+        userModel.destroy({where:{user_id:params.user_id}}).then(function (result) {
             var resultData=undefined;
             if(result!=null){
                 resultData={
