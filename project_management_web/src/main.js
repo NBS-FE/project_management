@@ -12,18 +12,13 @@ import './assets/css/reset.css'
 import './assets/js/filter'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import  VueQuillEditor from 'vue-quill-editor'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
 import LightTimeline from 'vue-light-timeline';
 import '../static/ueditor/ueditor.config'
 import '../static/ueditor/ueditor.all.min'
 import '../static/ueditor/lang/zh-cn/zh-cn'
 import '../static/ueditor/ueditor.parse.min'
 
-Vue.use(LightTimeline);
-Vue.use(VueQuillEditor)
+Vue.use(LightTimeline)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
