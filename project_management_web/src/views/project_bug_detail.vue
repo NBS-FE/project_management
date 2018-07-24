@@ -258,7 +258,6 @@
     created(){
       this.getProjectBugInfo();
       this. getProjectBugRecordList();
-
     },
     methods :{
       getProjectBugInfo:function () {
