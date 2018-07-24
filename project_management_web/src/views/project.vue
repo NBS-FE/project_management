@@ -102,7 +102,7 @@
         })
       },
       jumpUser:function () {
-        this.$router.push({ path: '/userList' })
+        this.$router.push({ path: '/common/userList' })
       },
       returnPage:function () {
         this.$router.push({ path: '/projectlist' })
