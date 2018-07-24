@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
+var weekRouter = require('./routes/week_report')
 
 var app = express();
 
@@ -23,11 +24,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/project', projectRouter);
+app.use('/week',weekRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+//拦截器
+/*app.use(function (req, res, next) {
+    var url = req.originalUrl;
+    if (url != "/user/login" && !req.session.user&&url != "/user/register") {
+        res.json({
+            code:8
+        });
+    }else {
+        next();
+    }
+});*/
 
 // error handler
 app.use(function(err, req, res, next) {
