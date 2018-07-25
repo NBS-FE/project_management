@@ -14,7 +14,7 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button type="primary" title="编辑" size="small" @click="userFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
-              <el-button type="danger" size="small" icon="el-icon-delete" @click="userDeleteOpen(scope.row.user_id)" circle></el-button>
+              <!--<el-button type="danger" size="small" icon="el-icon-delete" @click="userDeleteOpen(scope.row.user_id)" circle></el-button>-->
               <router-link :to="{ path: '/common/weekDetail/'+scope.row.week_report_id}">
                 <el-button icon="el-icon-search" size="small" type="primary" title="查看详情" style="margin-left:10px;"  circle></el-button>
               </router-link>
