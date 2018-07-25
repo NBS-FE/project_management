@@ -45,10 +45,11 @@ module.exports = {
         userModel.findOne({where:{user_name:params.user_name,user_password:params.user_password}}).then(function(result){
             var resultData=undefined;
             if(result!=null){
+                // req.session.userObj = result.dataValues;
                 resultData= {
                     user: result
                 }
-                // req.session.user = result;
+                console.log(req.session);
             }
             jsonWrite(res, resultData);
         })
@@ -93,7 +94,7 @@ module.exports = {
         })
     },
     logOut:function (req, res, next) {
-        // delete req.session.user;
+        // delete req.session.userObj;
         var resultData = {
             value:1
         };
