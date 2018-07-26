@@ -163,7 +163,7 @@
 
       },
       jumpUser:function () {
-        this.$router.push({ path: '/userList' })
+        this.$router.push({ path: '/common/userList' })
       },
       projectSubmit:function () {
         var vm=this;

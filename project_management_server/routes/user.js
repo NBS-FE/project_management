@@ -24,5 +24,13 @@ router.post('/deleteUser', function(req, res, next) {
     userDao.deleteUser(req, res, next);
 });
 
+router.post('/login', function(req, res, next) {
+    userDao.login(req, res, next);
+});
+
+router.get('/logOut', function(req, res, next) {
+    userDao.logOut(req, res, next);
+});
+
 
 module.exports = router;
