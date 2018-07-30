@@ -2720,3 +2720,6 @@ label {
   width: 80px!important;
 }
 
+.el-upload__input  {
+  display: none!important;
+}

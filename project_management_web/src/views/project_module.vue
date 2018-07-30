@@ -4,7 +4,7 @@
        <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
          <el-breadcrumb-item class="margin-left-20">项目模块</el-breadcrumb-item>
        </el-breadcrumb>
-       <el-button style="float:right" class="margin-top-10 margin-right-20" size="small" type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>
+       <el-button style="float:right" class="margin-top-10 margin-right-20" size="small" type="success" icon="el-icon-plus" @click="moduleFormOpen('add')"  >新增模块</el-button>
      </div>
      <!--<el-row>
        <el-button style="float:right"  type="primary" @click="moduleFormOpen('add')"  round>新增模块</el-button>

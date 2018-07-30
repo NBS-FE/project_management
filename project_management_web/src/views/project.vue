@@ -8,15 +8,16 @@
         <div class="header-right">
           <div class="header-user-con">
             <!--<div class="user-avator"><img src="../assets/img/user.png"></div>-->
-            <el-dropdown trigger="click" class="user-name" style="color:aliceblue;height: 60px;line-height: 60px">
+            <router-link v-if="loginUser==null" class="fs16 warning" style="color:aliceblue" :to="'/login'">登录</router-link>
+            <el-dropdown v-if="loginUser!=null" trigger="click" class="user-name" style="color:aliceblue;height: 60px;line-height: 60px">
               <span class="el-dropdown-link user-avator " style="height: 60px;display: block" >
-                <img src="../assets/img/user.png">系统管理员<i class=" el-icon--right"></i>
+                <img src="../assets/img/user.png">{{loginUser.full_name}}<i class=" el-icon--right"></i>
               </span>
               <el-dropdown-menu  slot="dropdown">
                 <el-dropdown-item></el-dropdown-item>
-                <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>用户管理</el-dropdown-item>
+                <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>系统管理</el-dropdown-item>
                 <el-dropdown-item><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
-                <el-dropdown-item><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
+                <el-dropdown-item @click.native="userLogout"><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
 
               </el-dropdown-menu>
             </el-dropdown>
@@ -72,13 +73,17 @@
   export default {
     data() {
       return {
+        loginUser:sessionStorage.getItem('user'),
         projectInfo:"",
         projectId:this.$route.params.projectId,
         activeRouter:this.$route.fullPath
       }
     },
     created(){
-        this.getProjectInfo()
+        this.getProjectInfo();
+      if(this.loginUser!=null){
+        this.loginUser=JSON.parse(this.loginUser)
+      }
     },
     methods :{
       getProjectInfo:function () {
@@ -106,6 +111,24 @@
       },
       returnPage:function () {
         this.$router.push({ path: '/projectlist' })
+      },
+      userLogout:function () {
+          var vm=this;
+        vm.$http({
+          method: 'GET',
+          url: vm.config.baseUrl + 'user/logOut',
+        }).then(function (data) {
+          var result = data.data;
+          var response = result.code;
+          if (response == 0) {
+            vm.$router.push({ path: '/projectlist' });
+            sessionStorage.removeItem('user');
+            this.loginUser=null;
+          } else {
+            vm.$message.error("退出失败！！");
+          }
+        })
+
       },
       returnHomePage:function () {
           var homePath='/project/home/'+this.projectId;

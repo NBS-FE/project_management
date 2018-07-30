@@ -8,6 +8,7 @@ var User = sequelize.define('User', {
     user_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     user_password : {type : Sequelize.STRING},
     user_name : {type : Sequelize.STRING},
+    full_name : {type : Sequelize.STRING},
     user_phone : {type : Sequelize.STRING},
     user_email : {type : Sequelize.STRING},
     user_duty : {type : Sequelize.STRING}

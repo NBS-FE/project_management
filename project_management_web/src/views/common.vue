@@ -5,13 +5,14 @@
         <el-button size="small" @click="returnPage" class="" type="info" style="float: right;margin-top:15px " round><i class="fa fa-mail-reply margin-right-5"></i>返回</el-button>
         <div class="header-right">
           <div class="header-user-con">
-            <el-dropdown trigger="click" class="user-name" style="color:aliceblue;height: 60px;line-height: 60px">
+            <router-link v-if="loginUser==null" class="fs16 warning" style="color:aliceblue" :to="'/login'">登录</router-link>
+            <el-dropdown v-if="loginUser!=null" trigger="click" class="user-name" style="color:aliceblue;height: 60px;line-height: 60px">
               <span class="el-dropdown-link user-avator " style="height: 60px;display: block" >
-                <img src="../assets/img/user.png">系统管理员<i class=" el-icon--right"></i>
+                <img src="../assets/img/user.png">{{loginUser.full_name}}<i class=" el-icon--right"></i>
               </span>
               <el-dropdown-menu  slot="dropdown">
                 <el-dropdown-item></el-dropdown-item>
-                <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>用户管理</el-dropdown-item>
+                <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>系统管理</el-dropdown-item>
                 <el-dropdown-item @click.native="jumpPassword"><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
                 <el-dropdown-item @click.native="jumpLogin"><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
 
@@ -79,6 +80,7 @@
         }
       };
       return {
+        loginUser:sessionStorage.getItem('user'),
         userList:[],
         dialogTableVisible:false,
         dialogDeleteVisible:false,
@@ -131,6 +133,9 @@
     },
     created(){
       this.getUserList(this.currentPage);
+      if(this.loginUser!=null){
+        this.loginUser=JSON.parse(this.loginUser)
+      }
     },
     methods:{
       userFormOpen:function(type,obj){
@@ -163,7 +168,7 @@
         this.delId = deleteId;
       },
       jumpUser:function () {
-        this.$router.push({ path: '/userList' })
+        this.$router.push({ path: '/common/userList' })
       },
       userSubmit: function () {
         var vm=this;
@@ -258,8 +263,8 @@
           var result = data.data;
           var response = result.code;
           if (response == 0) {
-            vm.$router.push({ path: '/login' });
-            localStorage.removeItem('user');
+            vm.$router.push({ path: '/projectlist' });
+            sessionStorage.removeItem('user');
           }
         })
       },
@@ -300,5 +305,14 @@
     width:30px;
     height:30px;
     border-radius: 50%;
+  }
+  .el-menu-left.el-menu {
+    height: 100%;
+  }
+  .el-aside{
+    background-color: #fff;
+    -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
+    -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,.2);
   }
 </style>

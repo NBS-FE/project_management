@@ -6,6 +6,7 @@ var sequelize=require('../conf/db');
 var weekDetail = sequelize.define('weekDetail', {
     wd_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     user_name : {type : Sequelize.STRING},
+    user_id : {type : Sequelize.INTEGER},
     content : {type : Sequelize.STRING},
     week_id: {type :Sequelize.INTEGER}
 },{

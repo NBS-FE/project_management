@@ -24,7 +24,7 @@
           </table>
         </div>
         <div class="itme-title margin-top-20">列表
-          <el-button type="success"  style="float: right;margin-top: -5px"  size="small" plain @click="peopleFormOpen"><i class="fa fa-plus margin-right-5"></i>新增</el-button>
+          <el-button type="success"  style="float: right;margin-top: -5px"  size="small" plain @click="peopleFormOpen('add')"><i class="fa fa-plus margin-right-5"></i>新增</el-button>
         </div>
         <div class="padding-10">
           <el-table :data="weekPeopleList" border style="width: 100%;margin-top:10px;">
@@ -35,21 +35,26 @@
                 <div v-html="scope.row.content"></div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="60">
+            <el-table-column label="操作" width="100">
               <template slot-scope="scope">
-                <el-button type="primary" title="编辑" size="small" @click="peopleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
+                <el-button type="primary" v-show="loginUser.user_id==scope.row.user_id" title="编辑" size="small" @click="peopleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
                 <!--<el-button type="danger" size="small" icon="el-icon-delete" @click="userDeleteOpen(scope.row.user_id)" circle></el-button>-->
+                <el-button type="danger" v-show="loginUser.user_id==scope.row.user_id" title="删除记录" style="margin-left:5px;" size="small" @click="recordDeleteOpen(scope.row.wd_id)" icon="el-icon-delete" circle></el-button>
+
               </template>
             </el-table-column>
           </el-table>
         </div>
         <el-dialog class="bug-record-panel" width="900px" :title="title" :visible.sync="bugRecordFormVisible" :close-on-click-modal="false"  >
           <el-form :model="peopleRecordForm" :rules="bugRecordRules" label-width="80px"  ref="peopleRecordForm"  style="padding: 0 20px">
-            <el-form-item label="姓名" prop="user_name" >
+           <!-- <el-form-item label="姓名" prop="user_name" >
               <el-input  placeholder="请输入创建人" v-model="peopleRecordForm.user_name"></el-input>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item label="工作内容"  prop="content">
-              <UE :defaultMsg='uecontent' :config=ueconfig ref="ue"></UE>
+              <div class="demand-editor">
+                <UE :defaultMsg='uecontent' :config=ueconfig ref="ue"></UE>
+              </div>
+
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -57,7 +62,15 @@
             <el-button type="primary" @click.native="peopleRecordSubmit" >提交</el-button>
           </div>
         </el-dialog>
-
+        <el-dialog title="删除记录" :visible.sync="dialogDeleteVisible" width="500px">
+          <div class="fs16 danger">
+            确定要删除该记录吗？
+          </div>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogDeleteVisible = false">取消</el-button>
+            <el-button type="primary" @click="deleteSubmit">确定</el-button>
+          </div>
+        </el-dialog>
       </div>
     </div>
 </template>
@@ -68,7 +81,10 @@
     components: {UE},
     data(){
         return {
+          dialogDeleteVisible:false,
           weekPeopleList:[],
+          loginUser:JSON.parse(sessionStorage.getItem('user')),
+          delId:'',
           weekInfo:{
             report_title:'',
             report_time:''
@@ -118,16 +134,23 @@
       peopleFormOpen:function (type,obj) {
         this.weekType = type;
         this.bugRecordFormVisible=true;
+        this.uecontent = " ";
         if(type=='add'){
           this.title = '新增';
+
           if(this.$refs['peopleRecordForm']!=undefined){
             this.$refs['peopleRecordForm'].resetFields();
           }
+
+
         }else{
           this.title = '修改';
-          this.uecontent = obj.content;
-          this.peopleRecordForm=obj;
+          this.peopleRecordForm=JSON.parse(JSON.stringify(obj));
+          this.uecontent =  this.peopleRecordForm.content;
+
         }
+        this.peopleRecordForm.user_name=this.loginUser.full_name;
+        this.peopleRecordForm.user_id=this.loginUser.user_id
       },
       indexMethod:function (index) {
         var vm=this;
@@ -137,7 +160,7 @@
           var vm = this;
           vm.$refs['peopleRecordForm'].validate((valid) => {
               if(valid){
-                var peopleInfo = this.peopleRecordForm;
+                var peopleInfo = vm.peopleRecordForm;
                 peopleInfo.content = vm.$refs.ue.getUEContent();
                 peopleInfo.week_id = vm.weekId;
                 var url = '';
@@ -175,7 +198,30 @@
             vm.weekPeopleList = data.recordList;
           }
         })
-      }
+      },
+      recordDeleteOpen:function(deleteId){
+        this.dialogDeleteVisible = true;
+        this.delId = deleteId;
+      },
+
+      deleteSubmit: function () {
+        var vm=this;
+        vm.$http({
+          method: 'POST',
+          url: vm.config.baseUrl + 'week/deleteRecord',
+          data: {wd_id:vm.delId}
+        }).then(function (data) {
+          var result = data.data;
+          var response = result.code;
+          if (response == 0) {
+            vm.dialogDeleteVisible = false;
+            vm.getRecordList();
+            vm.$message({message: '删除成功！！', type: 'success'});
+          } else {
+            vm.$message.error('提交失败！！');
+          }
+        })
+      },
     }
   }
 </script>
