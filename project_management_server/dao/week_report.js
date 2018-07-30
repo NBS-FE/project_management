@@ -80,7 +80,18 @@ exports.addWeekRecord = function (req, res, next) {
         }
     })
 }
-
+exports.deleteWeekReport = function(req, res, next){
+    var week_report_id = req.body.week_report_id;
+    weekReportModel.destroy({where:{week_report_id:week_report_id}}).then(function(result){
+        var resultData=undefined;
+        if(result!=null){
+            resultData={
+                projectList:result,
+            }
+            jsonWrite(res, resultData);
+        }
+    })
+}
 exports.getRecordList = function (req, res, next) {
     var params = req.body;
     weekDetail.findAndCountAll({where:{week_id:params.week_id}}).then(function (result) {
@@ -98,11 +109,23 @@ exports.getRecordList = function (req, res, next) {
 
 exports.updateRecord = function (req, res, next) {
     var params = req.body;
-    weekDetail.update({where:{wd_id:params.wd_id}}).then(function (result) {
+    weekDetail.update(params,{where:{wd_id:params.wd_id}}).then(function (result) {
         var resultData=undefined;
         if(result!=null){
             resultData={
                 count:result.count
+            }
+            jsonWrite(res, resultData);
+        }
+    })
+}
+exports.deleteRecord = function(req, res, next){
+    var wd_id = req.body.wd_id;
+    weekDetail.destroy({where:{wd_id:wd_id}}).then(function(result){
+        var resultData=undefined;
+        if(result!=null){
+            resultData={
+                projectList:result,
             }
             jsonWrite(res, resultData);
         }

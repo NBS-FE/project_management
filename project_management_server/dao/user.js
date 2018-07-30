@@ -49,20 +49,21 @@ module.exports = {
                 resultData= {
                     user: result
                 }
-                console.log(req.session);
+                req.session.user =result;
             }
             jsonWrite(res, resultData);
         })
     },
     register:function(req, res, next){
         var params = req.body;
-        userModel.create({user_name:params.user_name,user_phone:params.user_phone,user_email:params.user_email,user_password:params.user_password}).then(function(result){
+        userModel.create(params).then(function(result){
             var resultData=undefined;
             if(result!=null){
                 resultData={
                     userList:result.rows,
                     count:result.count
                 }
+
             }
             jsonWrite(res, resultData);
         })
@@ -95,10 +96,8 @@ module.exports = {
     },
     logOut:function (req, res, next) {
         // delete req.session.userObj;
-        var resultData = {
-            value:1
-        };
-        jsonWrite(res, resultData);
+        req.session.user =null;
+        jsonWrite(res, {code:0});
     }
 }
 

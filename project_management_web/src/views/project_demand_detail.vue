@@ -35,6 +35,7 @@
           </tbody>
         </table>
       </div>
+
      <!-- <div class="itme-title margin-top-20">项目网址列表
         <el-button type="success"  style="float: right;margin-top: -5px" class=" margin-right-10" size="small" plain @click="urlFormOpen('add')"><i class="fa fa-plus margin-right-5"></i>新增网址</el-button>
 
@@ -116,6 +117,19 @@
             </div>
 
           </el-form-item>
+          <el-form-item label="附件上传">
+            <el-upload
+              class="upload-demo"
+              ref="upload"
+              action="000"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :before-upload="beforeUpload"
+              :file-list="fileList"
+              :auto-upload="false">
+              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            </el-upload>
+          </el-form-item>
 
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -126,9 +140,6 @@
 
     </div>
   </div>
-
-
-
 </template>
 <script>
   import UE from '@/components/ue.vue';
@@ -173,6 +184,7 @@
           }
         },
         urlOpenNum:0,
+        fileList: []
       }
     },
     created(){
@@ -215,10 +227,22 @@
             }
             demandInfo.demand_content=vm.$refs.ue.getUEContent();
             demandInfo.project_id=vm.projectId;
+            var formData = new FormData();
+            for(var variable  in demandInfo){
+              formData.append(variable,demandInfo[variable])
+            }
+            if(vm.fileList.length>0){
+                vm.fileList.forEach(function (filedata,index) {
+                  formData.append('file'+index,filedata.raws)
+                })
+            }
             vm.$http({
               method: 'POST',
               url: this.config.baseUrl + 'project/updateProjectDemand',
-              data: demandInfo
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              },
+              data: formData
             }).then(function (data) {
               var result = data.data;
               var response = result.code;
@@ -300,6 +324,17 @@
             vm.$message.error('提交失败！！');
           }
         })
+      },
+      beforeUpload(file,fileList) {
+        console.log(fileList)
+
+        return false;
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePreview(file) {
+        console.log(file);
       }
     }
   }

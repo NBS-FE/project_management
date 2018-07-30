@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var multer = require('multer')
+var upload = multer({ dest: 'uploads/' })
 var projectDao=require('../dao/project')
 var projectUrlDao=require('../dao/project_url')
 var projectModuleDao = require('../dao/project_module')
@@ -75,7 +77,7 @@ router.post('/addProjectDemand', function(req, res, next) {
 router.get('/getProjectDemandList', function(req, res, next) {
     projectDemandDao.getProjectDemandList(req, res, next);
 });
-router.post('/updateProjectDemand', function(req, res, next) {
+router.post('/updateProjectDemand',upload.array('photos', 12), function(req, res, next) {
     projectDemandDao.updateProjectDemand(req, res, next);
 });
 //删除需求

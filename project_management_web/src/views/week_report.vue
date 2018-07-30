@@ -5,19 +5,20 @@
           <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
             <el-breadcrumb-item class="margin-left-20">周报管理</el-breadcrumb-item>
           </el-breadcrumb>
-          <el-button style="float:right" class="margin-top-10 margin-right-20" size="small" type="primary" @click="userFormOpen('add')"  round>新增周报</el-button>
+          <el-button style="float:right" class="margin-top-10 margin-right-20" size="small" type="success" icon="el-icon-plus" @click="userFormOpen('add')"  >新增周报</el-button>
         </div>
         <el-table :data="weekList" border style="width: 100%;margin-top:10px;">
           <el-table-column label="序号" width="60" type="index" :index="indexMethod" ></el-table-column>
           <el-table-column prop="report_title" label="标题"></el-table-column>
           <el-table-column prop="report_time" label="时间"></el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作"  width="140">
             <template slot-scope="scope">
               <el-button type="primary" title="编辑" size="small" @click="userFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
               <!--<el-button type="danger" size="small" icon="el-icon-delete" @click="userDeleteOpen(scope.row.user_id)" circle></el-button>-->
               <router-link :to="{ path: '/common/weekDetail/'+scope.row.week_report_id}">
-                <el-button icon="el-icon-search" size="small" type="primary" title="查看详情" style="margin-left:10px;"  circle></el-button>
+                <el-button icon="el-icon-search" size="small" type="primary" title="查看详情" style="margin-left:5px;"  circle></el-button>
               </router-link>
+              <el-button type="danger" title="删除周报" style="margin-left:5px;" size="small" @click="recordDeleteOpen(scope.row.week_report_id)" icon="el-icon-delete" circle></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -28,13 +29,13 @@
                        layout="total, sizes, prev, pager, next, jumper"
                        :total="totalCount">
         </el-pagination>
-        <el-dialog :title="dialogTitle" :visible.sync="dialogTableVisible">
+        <el-dialog :title="dialogTitle" :visible.sync="dialogTableVisible"  width="700px">
           <el-form :model="weekReport"  :rules="rules" ref="weekReport" label-width="80px">
             <el-form-item label="标题" prop="report_title">
               <el-input  placeholder="请输入标题" v-model="weekReport.report_title"></el-input>
             </el-form-item>
             <el-form-item label="时间" prop="report_time">
-              <el-date-picker type="date" value-format="yyyy-MM-dd" placeholder="选择时间" v-model="weekReport.report_time"></el-date-picker>
+              <el-date-picker type="date" style="width: 100%" value-format="yyyy-MM-dd" placeholder="选择时间" v-model="weekReport.report_time"></el-date-picker>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -42,9 +43,9 @@
             <el-button type="primary" @click="weekSubmit">确定</el-button>
           </div>
         </el-dialog>
-        <el-dialog title="删除用户" :visible.sync="dialogDeleteVisible">
+        <el-dialog title="删除周报" :visible.sync="dialogDeleteVisible" width="500px">
           <div class="fs16 danger">
-            确定要删除该用户吗？
+            确定要删除该周报吗？
           </div>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogDeleteVisible = false">取消</el-button>
@@ -95,9 +96,13 @@
           if(vm.$refs['weekReport']!=undefined){
             vm.$refs['weekReport'].resetFields();
           }
+          vm.weekReport= {
+            report_title:null,
+            report_time: vm.$moment().format("YYYY-MM-DD")
+          }
         }else{
           vm.dialogTitle = '修改周报';
-          vm.weekReport=obj;
+          vm.weekReport=JSON.parse(JSON.stringify(obj));
         }
       },
       getWeekList:function(currentPage){
@@ -114,7 +119,7 @@
           console.log(response)
         })
       },
-      userDeleteOpen:function(deleteId){
+      recordDeleteOpen:function(deleteId){
         this.dialogDeleteVisible = true;
         this.delId = deleteId;
       },
@@ -151,15 +156,15 @@
         var vm=this;
         vm.$http({
           method: 'POST',
-          url: vm.config.baseUrl + 'user/deleteUser',
-          data: {user_id:vm.delId}
+          url: vm.config.baseUrl + 'week/deleteWeekReport',
+          data: {week_report_id:vm.delId}
         }).then(function (data) {
           var result = data.data;
           var response = result.code;
           if (response == 0) {
             vm.dialogDeleteVisible = false;
             vm.getWeekList(vm.currentPage);
-            vm.$message({message: '提交成功！！', type: 'success'});
+            vm.$message({message: '删除成功！！', type: 'success'});
           } else {
             vm.$message.error('提交失败！！');
           }

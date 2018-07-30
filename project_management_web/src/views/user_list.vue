@@ -38,15 +38,15 @@
       <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
         <el-breadcrumb-item class="margin-left-20">用户管理</el-breadcrumb-item>
       </el-breadcrumb>
-      <el-button style="float:right" class="margin-top-10 margin-right-20" size="small" type="primary" @click="userFormOpen('add')"  round>新增用户</el-button>
+      <el-button style="float:right" class="margin-top-10 margin-right-20" size="small" type="success" icon="el-icon-plus" @click="userFormOpen('add')" >新增用户</el-button>
     </div>
     <el-table :data="userList" border style="width: 100%;margin-top:10px;">
       <el-table-column label="序号" width="60" type="index" :index="indexMethod" ></el-table-column>
-      <el-table-column prop="user_name" label="姓名"></el-table-column>
+      <el-table-column prop="full_name" label="用户姓名"></el-table-column>
       <el-table-column prop="user_phone" label="电话"></el-table-column>
       <el-table-column prop="user_email" label="邮箱"></el-table-column>
       <el-table-column prop="user_duty" label="职责"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作"  width="100">
         <template slot-scope="scope">
           <el-button type="primary" title="编辑" size="small" @click="userFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
           <el-button type="danger" size="small" icon="el-icon-delete" @click="userDeleteOpen(scope.row.user_id)" circle></el-button>
@@ -62,8 +62,11 @@
     </el-pagination>
     <el-dialog :title="dialogTitle" :visible.sync="dialogTableVisible">
       <el-form :model="user"  :rules="rules" ref="user" label-width="80px">
-        <el-form-item label="姓名" prop="user_name">
-          <el-input  placeholder="请输入姓名" v-model="user.user_name"></el-input>
+        <el-form-item label="账户名称" prop="user_name">
+          <el-input  placeholder="请输入账户名称" v-model="user.user_name"></el-input>
+        </el-form-item>
+        <el-form-item label="用户姓名" prop="full_name">
+          <el-input  placeholder="请输入用户姓名" v-model="user.full_name"></el-input>
         </el-form-item>
         <el-form-item label="电话" prop="user_phone">
           <el-input  placeholder="请输入电话" v-model="user.user_phone"></el-input>
@@ -75,10 +78,10 @@
           <el-input  placeholder="请输入职责" v-model="user.user_duty"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="user_password">
-          <el-input type="password" v-model="user.user_password" auto-complete="off"></el-input>
+          <el-input type="password" placeholder="请输入密码" v-model="user.user_password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPass">
-          <el-input type="password" v-model="user.checkPass" auto-complete="off"></el-input>
+          <el-input type="password"  placeholder="请输入确认密码" v-model="user.checkPass" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -135,9 +138,7 @@
         }
       };
       var checkPhone = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('手机号不能为空'));
-        } else {
+        if(value!=null){
           const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
           console.log(reg.test(value));
           if (reg.test(value)) {
@@ -159,6 +160,7 @@
         dialogTitle:'新增用户',
         user:{
           user_name:'',
+          full_name:'',
           user_phone:'',
           user_email:'',
           user_duty:'',
@@ -171,7 +173,10 @@
         },
         rules:{
           user_name:[
-            {required: true, message: '请输入姓名', trigger: 'change'},
+            {required: true, message: '请输入账号名称', trigger: 'change'},
+          ],
+          full_name:[
+            {required: true, message: '请输入用户姓名', trigger: 'change'},
           ],
           user_password: [
             { validator: validatePass, trigger: 'blur' }
@@ -183,6 +188,7 @@
             {type: 'email',message: '请输入正确的邮箱地址',trigger:['blur', 'change']}
           ],
           user_phone: [
+            {required: true, message: '请输入手机号', trigger: 'change'},
             {validator:checkPhone, trigger: 'blur'}
           ]
 
@@ -205,11 +211,14 @@
         this.dialogTableVisible = true;
         this.objType = type;
         if(type=='add'){
+          this.user={
+              user_name:null
+          }
           this.dialogTitle = '新增用户';
           this.$refs['user'].resetFields();
         }else{
           this.dialogTitle = '修改用户';
-          this.user=obj;
+          this.user=JSON.parse(JSON.stringify(obj));
         }
       },
       getUserList:function(currentPage){

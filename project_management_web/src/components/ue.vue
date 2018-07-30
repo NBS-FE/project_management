@@ -20,6 +20,14 @@
       },
 
     },
+    watch: {
+      defaultMsg: function value(val, oldVal) {
+        this.editor = UE.getEditor("ueid", this.config);
+        if (val !== null) {
+          this.editor.setContent(val);
+        }
+      },
+    },
     mounted() {
       const _this = this;
       _this.editor = UE.getEditor("ueid", _this.config); // 初始化UE

@@ -10,6 +10,7 @@ var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
 var weekRouter = require('./routes/week_report')
 
+
 var app = express();
 
 // view engine setup
@@ -20,14 +21,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({
-        secret:'dog',
-        resave:true,
-        saveUninitialized:false,
-        cookie : {
-            maxAge : 1000 * 60 * 3, // 设置 session 的有效时间，单位毫秒
-        }
-    }));
+app.use(session({resave: true, saveUninitialized: false, secret: 'love',rolling:true,cookie: {maxAge: 1000*60*30}}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //设置跨域访问
@@ -43,17 +37,17 @@ app.all('*', function(req, res, next) {
 
 
 //拦截器
-/*app.use(function (req, res, next) {
+app.use(function (req, res, next) {
     var url = req.originalUrl;
     console.log(req.session);
-    if (url != "/user/login" && !req.session.userObj&&url != "/user/register") {
+    if (url != "/project/getProjectList"&& url != "/user/login"&& !req.session.user) {
         res.json({
             code:8
         });
     }else {
         next();
     }
-});*/
+});
 
 app.use('/', indexRouter);
 app.use('/user', userRouter);
