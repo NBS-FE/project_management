@@ -1,5 +1,6 @@
 
 var projectDemandModel=require('../model/project_demand')
+var fileUploadModel=require('../model/file_upload')
 
 var jsonWrite = function (res, ret) {
     if(typeof ret === 'undefined') {
@@ -22,6 +23,7 @@ var jsonWrite = function (res, ret) {
  */
 exports.insertProjectDemand=function (req, res, next) {
     var demandData=req.body;
+    demandData.demand_creator=req.session.user.user_id;
     projectDemandModel.create(demandData)
         .then(function (result) {
             var resultData=undefined;
@@ -31,7 +33,30 @@ exports.insertProjectDemand=function (req, res, next) {
                     count:result.count
                 }
             }
-            jsonWrite(res, resultData);
+            if(req.files!=null&&req.files.length>0){
+                var uploadList=[];
+                req.files.forEach(function (defile) {
+
+                    var fupload={
+                        file_upload_name:defile.originalname,
+                        file_upload_type:3,
+                        file_upload_type_id:result.demand_id,
+                        file_upload_creator:req.session.user.full_name,
+                        file_upload_create_time:new Date(),
+                        file_upload_url:"uploads/"+defile.filename
+                    }
+                    uploadList.push(fupload)
+
+                })
+
+                fileUploadModel.bulkCreate(uploadList).then(function (fileResult) {
+                    jsonWrite(res, resultData);
+                })
+            }else {
+                jsonWrite(res, resultData);
+            }
+
+            //jsonWrite(res, resultData);
         }).catch(function (err) {
         console.log('project/insertProjectDemand error:' + err)
     })
@@ -40,7 +65,7 @@ exports.insertProjectDemand=function (req, res, next) {
 exports.getProjectDemandList=function (req, res, next) {
     var projectId=req.query.project_id;
     if(projectId!=null&&projectId.length>0){
-    projectDemandModel.findAndCountAll({where:{project_id:projectId}}).then(function (result) {
+    projectDemandModel.findAndCountAll({where:{project_id:projectId},offset:(req.query.currentPage-1)*10,limit:10}).then(function (result) {
         var resultData=undefined;
         if(result!=null){
             resultData={
@@ -64,8 +89,9 @@ exports.getProjectDemandList=function (req, res, next) {
  * @param next
  */
 exports.updateProjectDemand=function (req, res, next) {
-    var urlData=req.body;
-    projectDemandModel.update(urlData,{where:{demand_id:urlData.demand_id}})
+
+    var demandData=req.body;
+    projectDemandModel.update(demandData,{where:{demand_id:demandData.demand_id}})
         .then(function (result) {
             var resultData=undefined;
             if(result!=null){
@@ -74,7 +100,29 @@ exports.updateProjectDemand=function (req, res, next) {
                     count:result.count
                 }
             }
-            jsonWrite(res, resultData);
+            if(req.files!=null&&req.files.length>0){
+                var uploadList=[];
+                req.files.forEach(function (defile) {
+
+                    var fupload={
+                        file_upload_name:defile.originalname,
+                        file_upload_type:3,
+                        file_upload_type_id:demandData.demand_id,
+                        file_upload_creator:req.session.user.full_name,
+                        file_upload_create_time:new Date(),
+                        file_upload_url:"uploads/"+defile.filename
+                    }
+                    uploadList.push(fupload)
+
+                })
+
+                fileUploadModel.bulkCreate(uploadList).then(function (fileResult) {
+                    jsonWrite(res, resultData);
+                })
+            }else {
+                jsonWrite(res, resultData);
+            }
+
         }).catch(function (err) {
         console.log('project/updateProjectDemand error:' + err)
     })
@@ -112,8 +160,11 @@ exports.deleteProjectDemand=function (req, res, next) {
 exports.getProjectDemandInfo=function (req, res, next) {
     var demandId=req.query.demand_id;
     if(demandId!=null&&demandId.length>0){
-        projectDemandModel.findOne({
-            where:{demand_id:demandId}}).then(function (result) {
+        projectDemandModel.findOne({include: [{
+            model: fileUploadModel,
+             where:{file_upload_type:3},
+            required: false
+        }],where:{demand_id:demandId}}).then(function (result) {
             var resultData=undefined;
             if(result!=null){
                 resultData={

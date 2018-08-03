@@ -1,7 +1,11 @@
-
+var moment = require('moment');
 var projectBugModel=require('../model/project_bug')
 var projectBugRecordModel=require('../model/project_bug_record')
-
+var userModel=require('../model/user')
+var bugCreator={association: projectBugModel.belongsTo(userModel, { foreignKey: 'bug_creator',as:'bugCreator'})}
+var bugHandler={association: projectBugModel.belongsTo(userModel, { foreignKey: 'bug_handler',as:'bugHandler'})}
+var bugRecordCreator={association: projectBugRecordModel.belongsTo(userModel, { foreignKey: 'bug_record_creator',as:'bugRecordCreator'})}
+var bugRecordReceiver={association: projectBugRecordModel.belongsTo(userModel, { foreignKey: 'bug_record_receiver',as:'bugRecordReceiver'})}
 var jsonWrite = function (res, ret) {
     if(typeof ret === 'undefined') {
         res.json({
@@ -23,6 +27,8 @@ var jsonWrite = function (res, ret) {
  */
 exports.insertProjectBug=function (req, res, next) {
     var bugData=req.body;
+    bugData.bug_creator=req.session.user.user_id;
+    bugData.bug_create_time=moment().format('YYYY-MM-DD HH:mm:ss');
     var resultData=undefined;
     projectBugModel.create(bugData)
         .then(function (result) {
@@ -55,7 +61,8 @@ exports.insertProjectBug=function (req, res, next) {
 exports.getProjectBugList=function (req, res, next) {
     var projectId=req.query.project_id;
     if(projectId!=null&&projectId.length>0){
-    projectBugModel.findAndCountAll({where:{project_id:projectId}}).then(function (result) {
+
+    projectBugModel.findAndCountAll({include: [bugCreator,bugHandler],where:{project_id:projectId},offset:(req.query.currentPage-1)*10,limit:10}).then(function (result) {
         var resultData=undefined;
         if(result!=null){
             resultData={
@@ -127,7 +134,7 @@ exports.deleteProjectBug=function (req, res, next) {
 exports.getProjectBugInfo=function (req, res, next) {
     var bugId=req.query.bug_id;
     if(bugId!=null&&bugId.length>0){
-        projectBugModel.findOne({
+        projectBugModel.findOne({include: [bugCreator,bugHandler],
             where:{bug_id:bugId}}).then(function (result) {
             var resultData=undefined;
             if(result!=null){
@@ -153,6 +160,8 @@ exports.getProjectBugInfo=function (req, res, next) {
  */
 exports.insertProjectBugRecord=function (req, res, next) {
     var bugRecordData=req.body;
+    bugRecordData.bug_record_creator=req.session.user.user_id;
+    bugRecordData.bug_record_create_time=moment().format('YYYY-MM-DD HH:mm:ss');;
     var resultData=undefined;
     projectBugRecordModel.create(bugRecordData)
         .then(function (result) {
@@ -184,7 +193,7 @@ exports.insertProjectBugRecord=function (req, res, next) {
 exports.getProjectBugRecordList=function (req, res, next) {
     var bugId=req.query.bug_id;
     if(bugId!=null&&bugId.length>0){
-        projectBugRecordModel.findAndCountAll({where:{bug_id:bugId},order: [['bug_record_id', 'DESC']]}).then(function (result) {
+        projectBugRecordModel.findAndCountAll({include:[bugRecordCreator,bugRecordReceiver],where:{bug_id:bugId},order: [['bug_record_id', 'DESC']]}).then(function (result) {
             var resultData=undefined;
             if(result!=null){
                 resultData={

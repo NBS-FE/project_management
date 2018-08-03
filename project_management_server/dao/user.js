@@ -29,7 +29,11 @@ module.exports = {
     queryList:function (req, res, next) {
         var params = req.query;
         console.log(params.currentPage);
-        userModel.findAndCountAll({offset:(params.currentPage-1)*10,limit:10}).then(function (result) {
+        var pageParams={}
+        if(params!=null&&params.currentPage!=null){
+            pageParams={offset:(params.currentPage-1)*10,limit:10}
+        }
+        userModel.findAndCountAll(pageParams).then(function (result) {
             var resultData=undefined;
             if(result!=null){
                 resultData={

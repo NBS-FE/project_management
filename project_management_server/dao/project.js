@@ -1,4 +1,5 @@
 var projectModel=require('../model/project')
+var userModel=require('../model/user')
 var projectUrlModel=require('../model/project_url')
 
 var jsonWrite = function (res, ret) {
@@ -21,7 +22,7 @@ var jsonWrite = function (res, ret) {
 exports.queryList=function (req, res, next) {
     projectModel.findAndCountAll({include: [{
         model: projectUrlModel
-    }]}).then(function (result) {
+    }],order: [['project_status', 'DESC']]}).then(function (result) {
 		var resultData=undefined;
 		if(result!=null){
             resultData={
@@ -88,6 +89,7 @@ exports.updateProject=function (req, res, next) {
  * @param res
  * @param next
  */
+
 exports.getProjectInfo=function (req, res, next) {
     var projectId=req.query.project_id;
     if(projectId!=null&&projectId.length>0){
@@ -100,7 +102,21 @@ exports.getProjectInfo=function (req, res, next) {
                     projectInfo:result
                 }
             }
-            jsonWrite(res, resultData);
+            var pdeveloper=result.project_developer;
+            if(pdeveloper!=null&&pdeveloper.length>0){
+               var pdeveloperList=pdeveloper.split(',');
+                userModel.findAll({where:{user_id:{
+                    $in:pdeveloperList
+                }}}).then(function (dresult) {
+                    resultData.developerList=dresult;
+                    jsonWrite(res, resultData);
+                })
+            }else {
+                jsonWrite(res, resultData);
+            }
+
+
+
         })
     }else {
         res.json({
