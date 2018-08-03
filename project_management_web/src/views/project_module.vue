@@ -106,10 +106,10 @@
         },
         rules: {
           module_name: [
-            {required: true, message: '请输入项目名称', trigger: 'change'},
+            {required: true, message: '请输入项目名称', trigger: 'blur'},
           ],
           module_developer: [
-            {required: true, message: '请输入开发人员', trigger: 'change'}
+            {required: true, message: '请输入开发人员', trigger: 'blur'}
           ]
         },
         columns:[
@@ -149,7 +149,7 @@
           url: vm.config.baseUrl+'project/treeProjectList'
         }).then(function(response) {
           var data=response.data;
-          var status = data.code;;
+          var status = data.code;
           if(status==0){
             vm.treeList=data.treeList
           }

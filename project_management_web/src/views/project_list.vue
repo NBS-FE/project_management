@@ -107,6 +107,20 @@
           <el-button type="primary" @click.native="projectSubmit" >提交</el-button>
         </div>
       </el-dialog>
+      <!--<el-dialog title="修改密码" :visible.sync="dialogPassVisible">
+        <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
+          <el-form-item label="新密码" prop="user_password">
+            <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="checkPass">
+            <el-input type="password" v-model="pass.checkPass" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogPassVisible = false">取消</el-button>
+          <el-button type="primary" @click="passSubmit">确定</el-button>
+        </div>
+      </el-dialog>-->
     </el-container>
 
 
@@ -114,10 +128,30 @@
 <script>
   export default {
     data() {
+      var validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else {
+          if (this.pass.checkPass !== '') {
+            this.$refs.pass.validateField('checkPass');
+          }
+          callback();
+        }
+      };
+      var validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.pass.user_password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
       return {
         loginUser:sessionStorage.getItem('user'),
         projectList: [],
         projectFormVisible: false,
+        dialogPassVisible:false,
         projectStatusOptions:[
           '进行中','已完成'
         ],
@@ -130,6 +164,19 @@
           ]
         },
         projectOpenNum:0,
+        pass:{
+          user_password:'',
+          checkPass:''
+        },
+        passRules:{
+          user_password: [
+            { validator: validatePass, trigger: 'blur' }
+          ],
+          checkPass: [
+            { validator: validatePass2, trigger: 'blur' }
+          ],
+        }
+
       }
     },
     created(){

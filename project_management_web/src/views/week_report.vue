@@ -52,7 +52,7 @@
             <el-button type="primary" @click="deleteSubmit">确定</el-button>
           </div>
         </el-dialog>
-        <hello-world></hello-world>
+        <!--<hello-world></hello-world>-->
       </div>
     </div>
 </template>
