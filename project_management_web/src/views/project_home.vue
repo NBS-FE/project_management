@@ -33,7 +33,7 @@
           </tr>
           <tr>
             <td width="150" class="info-title">开发人员</td>
-            <td colspan="3">{{projectInfo.project_developer}}</td>
+            <td colspan="3"><span v-if="developerList.length>0" v-for="(dev,index) in developerList">{{dev.full_name}}<i v-show="index<developerList.length-1">，</i></span></td>
           </tr>
           <tr>
             <td width="150" class="info-title">项目描述</td>
@@ -109,7 +109,15 @@
             </el-input>
           </el-form-item>
           <el-form-item label="开发人员" prop="project_developer" >
-            <el-input  placeholder="请输入开发人员" v-model="projectForm.project_developer">
+            <el-select v-model="projectForm.project_developer" multiple style="width: 100%"  placeholder="请选择">
+              <el-option
+                v-for="item in userList"
+                :key="item.user_id"
+                :label="item.full_name"
+                :value="item.user_id">
+              </el-option>
+            </el-select>
+            <!--<el-input  placeholder="请输入开发人员" v-model="projectForm.project_developer">-->
             </el-input>
           </el-form-item>
           <el-form-item label="项目状态" prop="project_status" >
@@ -197,10 +205,13 @@
           ]
         },
         urlOpenNum:0,
+        developerList:[],
+        userList:[]
       }
     },
     created(){
       this.getProjectInfo()
+      this.getUserList()
     },
     methods :{
       getProjectInfo:function () {
@@ -215,9 +226,9 @@
           var data=response.data
           var code=data.code;
           if(code==0){
-            vm.projectInfo=data.projectInfo
-            vm.projectForm=JSON.parse(JSON.stringify(data.projectInfo));
-            vm.projectForm.project_period=[new Date(vm.projectForm.project_begin),new Date(vm.projectForm.project_end)];
+            vm.projectInfo=data.projectInfo;
+            vm.developerList=data.developerList;
+
           }else {
             console.log(data.msg)
           }
@@ -226,7 +237,18 @@
         })
       },
       projectFormOpen:function () {
-        this.projectFormVisible = true;
+          var vm=this;
+        vm.projectFormVisible = true;
+        vm.projectForm=JSON.parse(JSON.stringify(vm.projectInfo));
+        if(vm.projectForm.project_developer!=null&&vm.projectForm.project_developer.length>0){
+          vm.projectForm.project_developer=vm.projectForm.project_developer.split(',')
+          vm.projectForm.project_developer.forEach(function (developerId,devindex) {
+            vm.projectForm.project_developer[devindex]=parseInt(developerId)
+          })
+        }else {
+          vm.projectForm.project_developer=[]
+        }
+        vm.projectForm.project_period=[new Date(vm.projectForm.project_begin),new Date(vm.projectForm.project_end)];
       },
       projectSubmit:function () {
         var vm=this;
@@ -237,6 +259,9 @@
             if(projectInfo.project_period!=null&&projectInfo.project_period.length>1){
               projectInfo.project_begin=vm.$moment(projectInfo.project_period[0]).format("YYYY-MM-DD");
               projectInfo.project_end=vm.$moment(projectInfo.project_period[1]).format("YYYY-MM-DD");
+            }
+            if(projectInfo.project_developer!=null&&projectInfo.project_developer.length>1) {
+              projectInfo.project_developer = projectInfo.project_developer.toString();
             }
             console.log(projectInfo)
             vm.$http({
@@ -323,6 +348,18 @@
           } else {
             vm.$message.error('提交失败！！');
           }
+        })
+      },
+      getUserList:function(){
+        var vm=this;
+        vm.$http({
+          method: 'get',
+          url: vm.config.baseUrl+'user/getUserList'
+        }).then(function(response) {
+          var data=response.data;
+          vm.userList=data.userList;
+        }).catch(function(response){
+          console.log(response)
         })
       }
     }

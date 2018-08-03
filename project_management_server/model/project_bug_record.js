@@ -7,10 +7,10 @@ var sequelize=require('../conf/db')
 var ProjectBugRecord = sequelize.define('ProjectBugRecord', {
     bug_record_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     bug_record_content : {type : Sequelize.STRING},
-    bug_record_creator : {type : Sequelize.STRING},
+    bug_record_creator : {type : Sequelize.INTEGER},
     bug_record_create_time : {type : Sequelize.STRING},
     bug_record_status : {type : Sequelize.STRING},
-    bug_record_receiver : {type : Sequelize.STRING},
+    bug_record_receiver : {type : Sequelize.INTEGER},
     bug_id : {type : Sequelize.INTEGER}
 },{
     timestamps: false,

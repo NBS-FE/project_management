@@ -26,14 +26,14 @@
           <tr>
 
             <td width="150" class="info-title">处理人</td>
-            <td >{{projectBugInfo.bug_handler}}</td>
+            <td >{{projectBugInfo.bugHandler.full_name}}</td>
             <td width="150" class="info-title">缺陷状态</td>
             <td >{{projectBugInfo.bug_status}}</td>
 
           </tr>
           <tr>
             <td width="150" class="info-title">创建人</td>
-            <td width="320">{{projectBugInfo.bug_creator}}</td>
+            <td width="320">{{projectBugInfo.bugCreator.full_name}}</td>
             <td width="150" class="info-title">创建时间</td>
             <td width="320">{{projectBugInfo.bug_create_time | dateFormat('YYYY-MM-DD')}}</td>
 
@@ -93,7 +93,15 @@
           </el-form-item>
           <el-form-item label="处理人" prop="bug_handler" >
             <el-col :span="10">
-              <el-input  placeholder="请输入处理人" v-model="bugForm.bug_handler"></el-input>
+              <el-select v-model="bugForm.bug_handler" style="width: 100%" placeholder="请选择处理人">
+                <el-option
+                  v-for="item in userList"
+                  :key="item.user_id"
+                  :label="item.full_name"
+                  :value="item.user_id">
+                </el-option>
+              </el-select>
+              <!--<el-input  placeholder="请输入处理人" v-model="bugForm.bug_handler"></el-input>-->
             </el-col>
             <el-col  class="line text-right padding-right-10" :span="4">缺陷状态</el-col>
             <el-col :span="10">
@@ -107,7 +115,7 @@
               </el-select>
             </el-col>
           </el-form-item>
-          <el-form-item label="创建人" prop="bug_creator" >
+         <!-- <el-form-item label="创建人" prop="bug_creator" >
             <el-col :span="10">
               <el-input  placeholder="请输入创建人" v-model="bugForm.bug_creator"></el-input>
             </el-col>
@@ -119,7 +127,7 @@
                             placeholder="请选择创建时间">
             </el-date-picker>
             </el-col>
-          </el-form-item>
+          </el-form-item>-->
 
           <el-form-item label="缺陷内容" prop="bug_content" >
             <div class="demand-editor">
@@ -145,7 +153,7 @@
 
 
 
-          <el-form-item label="创建人" prop="bug_record_creator" >
+         <!-- <el-form-item label="创建人" prop="bug_record_creator" >
             <el-col :span="10">
               <el-input  placeholder="请输入创建人" v-model="bugRecordForm.bug_record_creator"></el-input>
             </el-col>
@@ -157,7 +165,7 @@
                               placeholder="请选择创建时间">
               </el-date-picker>
             </el-col>
-          </el-form-item>
+          </el-form-item>-->
           <el-form-item label="缺陷状态" prop="bug_record_status" >
             <el-col :span="10">
               <el-select v-model="bugRecordForm.bug_record_status" style="width: 100%" placeholder="请选择缺陷状态">
@@ -171,7 +179,15 @@
             </el-col>
             <el-col v-if="bugRecordForm.bug_record_status=='转发'" class="line text-right padding-right-10" :span="4">接收人</el-col>
             <el-col :span="10" v-if="bugRecordForm.bug_record_status=='转发'">
-              <el-input  placeholder="请输入接收人" v-model="bugRecordForm.bug_record_receiver"></el-input>
+              <el-select v-model="bugRecordForm.bug_record_receiver" style="width: 100%" placeholder="请选择接收人">
+                <el-option
+                  v-for="item in userList"
+                  :key="item.user_id"
+                  :label="item.full_name"
+                  :value="item.user_id">
+                </el-option>
+              </el-select>
+              <!--<el-input  placeholder="请输入接收人" v-model="bugRecordForm.bug_record_receiver"></el-input>-->
             </el-col>
 
           </el-form-item>
@@ -252,10 +268,13 @@
           }
         },
         bugOpenNum:0,
-        recordItems: []
+        recordItems: [],
+        userList:[]
+
       }
     },
     created(){
+        this.getUserList();
       this.getProjectBugInfo();
       this. getProjectBugRecordList();
     },
@@ -302,7 +321,7 @@
                     tag: vm.$moment(brecord.bug_record_create_time).format('YYYY-MM-DD'),
                     type: 'circle',
                     color: 'green',
-                    content: brecord.bug_record_creator + "【" + brecord.bug_record_status + "】" +(brecord.bug_record_receiver ? brecord.bug_record_receiver : "")+ (brecord.bug_record_content ? "：" + brecord.bug_record_content : "")
+                    content: brecord.bugRecordCreator.full_name+ "【" + brecord.bug_record_status + "】" +(brecord.bugRecordReceiver? brecord.bugRecordReceiver.full_name : "")+ (brecord.bug_record_content ? "：" + brecord.bug_record_content : "")
                   }
                   if (index == 0) {
                     bugRecord.type = 'star';
@@ -391,6 +410,18 @@
               }
             })
           }
+        })
+      },
+      getUserList:function(){
+        var vm=this;
+        vm.$http({
+          method: 'get',
+          url: vm.config.baseUrl+'user/getUserList'
+        }).then(function(response) {
+          var data=response.data;
+          vm.userList=data.userList;
+        }).catch(function(response){
+          console.log(response)
         })
       },
 

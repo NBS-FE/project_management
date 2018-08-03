@@ -1,13 +1,24 @@
 var express = require('express');
 var router = express.Router();
 var multer = require('multer')
-var upload = multer({ dest: 'uploads/' })
+var fs=require('fs')
 var projectDao=require('../dao/project')
 var projectUrlDao=require('../dao/project_url')
 var projectModuleDao = require('../dao/project_module')
 var projectDemandDao=require('../dao/project_demand')
 var projectBugDao=require('../dao/project_bug')
+var systemCofig=require('../conf/config')
 
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, systemCofig.fileUploadUrl+"uploads/");
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + "-" + file.originalname);
+    }
+});
+
+var upload = multer({ storage: storage });
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a project');
@@ -70,14 +81,14 @@ router.get('/treeProjectList', function(req, res, next) {
 
 
 //新增需求
-router.post('/addProjectDemand', function(req, res, next) {
+router.post('/addProjectDemand',upload.array('demandFile', 10), function(req, res, next) {
     projectDemandDao.insertProjectDemand(req, res, next);
 });
 //查询需求列表
 router.get('/getProjectDemandList', function(req, res, next) {
     projectDemandDao.getProjectDemandList(req, res, next);
 });
-router.post('/updateProjectDemand',upload.array('photos', 12), function(req, res, next) {
+router.post('/updateProjectDemand',upload.array('demandFile', 10), function(req, res, next) {
     projectDemandDao.updateProjectDemand(req, res, next);
 });
 //删除需求
@@ -116,4 +127,5 @@ router.post('/addProjectBugRecord', function(req, res, next) {
 router.get('/getProjectBugRecordList', function(req, res, next) {
     projectBugDao.getProjectBugRecordList(req, res, next);
 });
+
 module.exports = router;

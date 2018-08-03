@@ -17,6 +17,7 @@
             <td width="150" class="info-title">需求标题</td>
             <td colspan="3">{{projectDemandInfo.demand_title}}</td>
           </tr>
+
           <tr>
             <td width="150" class="info-title">创建时间</td>
             <td width="320">{{projectDemandInfo.demand_create_time | dateFormat('YYYY-MM-DD')}}</td>
@@ -26,9 +27,20 @@
 
 
           <tr>
-            <td colspan="4" class="info-title">需求内容</td>
-
+            <td width="150" class="info-title" style="vertical-align: middle">需求附件</td>
+            <td colspan="3">
+              <table class="table table-bordered  fs14 home-table" >
+                <tbody>
+                <tr v-for="fileupload in projectDemandInfo.FileUploads">
+                  <td><a target="_blank" :href="config.baseUrl+fileupload.file_upload_url">{{fileupload.file_upload_name}}</a></td>
+                  <td width="60"> <el-button type="danger" size="small" icon="el-icon-delete" @click="fileDeleteOpen(fileupload)" circle></el-button></td>
+                </tr>
+                </tbody>
+              </table>
+            </td>
           </tr>
+
+          <tr> <td colspan="4" class="info-title">需求内容</td></tr>
           <tr>
             <td colspan="4"><div  style="min-height: 100px" class="demand-content" v-html="projectDemandInfo.demand_content"></div></td>
           </tr>
@@ -124,7 +136,7 @@
               action="000"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
-              :before-upload="beforeUpload"
+              :on-change="beforeUpload"
               :file-list="fileList"
               :auto-upload="false">
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -137,7 +149,15 @@
           <el-button type="primary" @click.native="demandSubmit" >提交</el-button>
         </div>
       </el-dialog>
-
+      <el-dialog class="delete-panel" width="400px" title="附件删除" :visible.sync="fileDeleteVisible" :close-on-click-modal="false"  >
+        <div class="fs16 danger">
+          确定要删除该附件吗？
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click.native="fileDeleteVisible = false">取消</el-button>
+          <el-button type="primary" @click.native="fileDelete" >提交</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -158,6 +178,8 @@
         projectId:this.$route.params.projectId,
         demandId:this.$route.params.demandId,
         demandFormVisible: false,
+        delFileData:"",
+        fileDeleteVisible : false,
         demandStatusOptions:[
           '进行中','已完成'
         ],
@@ -184,7 +206,8 @@
           }
         },
         urlOpenNum:0,
-        fileList: []
+        fileList: [],
+        uploadFileList: [],
       }
     },
     created(){
@@ -215,6 +238,8 @@
       },
       demandFormOpen:function () {
         this.demandFormVisible = true;
+        this.fileList=[];
+        this.uploadFileList=[];
         this.demandForm=JSON.parse(JSON.stringify( this.projectDemandInfo));
       },
       demandSubmit:function () {
@@ -231,9 +256,9 @@
             for(var variable  in demandInfo){
               formData.append(variable,demandInfo[variable])
             }
-            if(vm.fileList.length>0){
-                vm.fileList.forEach(function (filedata,index) {
-                  formData.append('file'+index,filedata.raws)
+            if(vm.uploadFileList.length>0){
+                vm.uploadFileList.forEach(function (filedata,index) {
+                  formData.append('demandFile',filedata)
                 })
             }
             vm.$http({
@@ -325,13 +350,46 @@
           }
         })
       },
+      fileDeleteOpen:function (fileData) {
+        this.delFileData=fileData;
+        this.fileDeleteVisible = true;
+      },
+      fileDelete:function () {
+        var vm=this;
+        vm.$http({
+          method: 'POST',
+          url: this.config.baseUrl + 'file/deleteFile',
+          data: vm.delFileData
+        }).then(function (data) {
+          var result = data.data;
+          var response = result.code;
+          if (response == 0) {
+            vm.fileDeleteVisible = false;
+            vm.$message({message: '删除成功！！', type: 'success'});
+            vm.getProjectDemandInfo()
+          } else {
+            vm.$message.error('提交失败！！');
+          }
+        })
+      },
       beforeUpload(file,fileList) {
-        console.log(fileList)
+        var vm=this;
+        vm.uploadFileList=[]
+        if(fileList!=null&&fileList.length>0){
+            fileList.forEach(function (ufile) {
+                vm.uploadFileList.push(ufile.raw)
+            })
+        }
 
-        return false;
       },
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        var vm=this;
+        vm.uploadFileList=[]
+        if(fileList!=null&&fileList.length>0){
+          fileList.forEach(function (ufile) {
+            vm.uploadFileList.push(ufile.raw)
+          })
+        }
       },
       handlePreview(file) {
         console.log(file);

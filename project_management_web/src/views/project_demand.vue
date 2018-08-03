@@ -23,6 +23,7 @@
            label="序号"
            width="60"
            type="index"
+           :index="indexMethod"
          >
          </el-table-column>
          <el-table-column
@@ -59,7 +60,13 @@
            </template>
          </el-table-column>
        </el-table>
-
+     <el-pagination style="float:right;margin-top:20px;"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="10" :page-sizes="[10]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalCount">
+     </el-pagination>
 
      <el-dialog class="demand-panel" width="900px" title="新增需求" :visible.sync="demandFormVisible" :close-on-click-modal="false"  >
        <el-form :model="demandForm" :rules="demandRules" label-width="80px"  ref="demandForm"  style="padding: 0 20px">
@@ -102,6 +109,19 @@
            </div>
 
          </el-form-item>
+         <el-form-item label="附件上传">
+           <el-upload
+             class="upload-demo"
+             ref="upload"
+             action="000"
+             :on-preview="handlePreview"
+             :on-remove="handleRemove"
+             :on-change="beforeUpload"
+             :file-list="fileList"
+             :auto-upload="false">
+             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+           </el-upload>
+         </el-form-item>
 
        </el-form>
        <div slot="footer" class="dialog-footer">
@@ -133,6 +153,8 @@
           wordCount: false,
           toolbars: this.config.ueditorToolbar
         },
+        currentPage:1,
+        totalCount:0,
         projectDemandList: [],
         demandFormVisible: false,
         demandDeleteVisible: false,
@@ -164,132 +186,42 @@
             ]
           }
         },
-
-        columns: [
-          {
-            text: '事件',
-            value: 'event',
-            width: 200
-          },
-          {
-            text: 'ID',
-            value: 'id'
-          },
-          {
-            text: '时间线',
-            value: 'timeLine'
-          },
-          {
-            text: '备注',
-            value: 'comment'
-          }
-        ],
-        data: [
-          {
-            id: 0,
-            event: '事件1',
-            timeLine: 50,
-            comment: '无',
-
-          },
-          {
-            id: 1,
-            event: '事件1',
-            timeLine: 100,
-            comment: '无',
-            children: [
-              {
-                id: 2,
-                event: '事件2',
-                timeLine: 10,
-                comment: '无'
-              },
-              {
-                id: 3,
-                event: '事件3',
-                timeLine: 90,
-                comment: '无',
-                children: [
-                  {
-                    id: 4,
-                    event: '事件4',
-                    timeLine: 5,
-                    comment: '无'
-                  },
-                  {
-                    id: 5,
-                    event: '事件5',
-                    timeLine: 10,
-                    comment: '无'
-                  },
-                  {
-                    id: 6,
-                    event: '事件6',
-                    timeLine: 75,
-                    comment: '无',
-                    children: [
-                      {
-                        id: 7,
-                        event: '事件7',
-                        timeLine: 50,
-                        comment: '无',
-                        children: [
-                          {
-                            id: 71,
-                            event: '事件71',
-                            timeLine: 25,
-                            comment: 'xx'
-                          },
-                          {
-                            id: 72,
-                            event: '事件72',
-                            timeLine: 5,
-                            comment: 'xx'
-                          },
-                          {
-                            id: 73,
-                            event: '事件73',
-                            timeLine: 20,
-                            comment: 'xx'
-                          }
-                        ]
-                      },
-                      {
-                        id: 8,
-                        event: '事件8',
-                        timeLine: 25,
-                        comment: '无'
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-
-
+        fileList: [],
+        uploadFileList: [],
       }
     },
     created(){
       this.getProjectDemandList()
     },
     methods :{
-      getProjectDemandList:function () {
+      getProjectDemandList:function (cPage) {
         var vm=this;
+        if(cPage==null){
+          cPage=1;
+          vm.currentPage=1
+        }
         vm.$http({
           method: 'get',
           url: vm.config.baseUrl+'project/getProjectDemandList',
           params:{
-            project_id:vm.projectId
+            project_id:vm.projectId,
+            currentPage:cPage
           }
         }).then(function(response) {
           var data=response.data
-          vm.projectDemandList=data.projectDemandList
+          if(data.code==0){
+            vm.projectDemandList=data.projectDemandList
+            vm.totalCount=data.count
+          }
 
         }).catch(function(response){
           console.log(response)
         })
+      },
+      handleCurrentChange:function (val) {
+        var vm=this;
+        vm.currentPage = val;
+        vm.getProjectDemandList(val);
       },
       demandFormOpen:function () {
         this.demandFormVisible = true;
@@ -314,10 +246,24 @@
               demandInfo.demand_create_time=vm.$moment(demandInfo.demand_create_time).format("YYYY-MM-DD");
             }
             demandInfo.project_id=vm.projectId;
+
+            var formData = new FormData();
+            for(var variable  in demandInfo){
+              formData.append(variable,demandInfo[variable])
+            }
+            if(vm.uploadFileList.length>0){
+              vm.uploadFileList.forEach(function (filedata,index) {
+                formData.append('demandFile',filedata)
+              })
+            }
+
             vm.$http({
               method: 'POST',
               url: this.config.baseUrl + 'project/addProjectDemand',
-              data: demandInfo
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              },
+              data: formData
             }).then(function (data) {
               var result = data.data;
               var response = result.code;
@@ -355,6 +301,31 @@
             vm.$message.error('提交失败！！');
           }
         })
+      },
+      indexMethod(index) {
+        return (this.currentPage-1)*10+1+index;
+      },
+      beforeUpload(file,fileList) {
+        var vm=this;
+        vm.uploadFileList=[]
+        if(fileList!=null&&fileList.length>0){
+          fileList.forEach(function (ufile) {
+            vm.uploadFileList.push(ufile.raw)
+          })
+        }
+
+      },
+      handleRemove(file, fileList) {
+        var vm=this;
+        vm.uploadFileList=[]
+        if(fileList!=null&&fileList.length>0){
+          fileList.forEach(function (ufile) {
+            vm.uploadFileList.push(ufile.raw)
+          })
+        }
+      },
+      handlePreview(file) {
+        console.log(file);
       }
 
     }

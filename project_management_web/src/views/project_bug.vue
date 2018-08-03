@@ -15,6 +15,7 @@
            label="序号"
            width="60"
            type="index"
+           :index="indexMethod"
          >
          </el-table-column>
          <el-table-column
@@ -38,12 +39,12 @@
        >
        </el-table-column>
        <el-table-column
-         prop="bug_handler"
+         prop="bugHandler.full_name"
          label="处理人"
        >
        </el-table-column>
        <el-table-column
-         prop="bug_creator"
+         prop="bugCreator.full_name"
          label="创建人"
        >
        </el-table-column>
@@ -68,6 +69,13 @@
            </template>
          </el-table-column>
        </el-table>
+     <el-pagination style="float:right;margin-top:20px;"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="10" :page-sizes="[10]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalCount">
+     </el-pagination>
      <el-dialog class="bug-panel" width="900px" title="新增缺陷" :visible.sync="bugFormVisible" :close-on-click-modal="false"  >
        <el-form :model="bugForm" :rules="bugRules" label-width="80px"  ref="bugForm"  style="padding: 0 20px">
          <el-form-item label="标题" prop="bug_title" >
@@ -97,22 +105,17 @@
              </el-select>
            </el-col>
          </el-form-item>
-         <el-form-item label="创建人" prop="bug_creator" >
+         <el-form-item label="处理人" prop="bug_handler" >
            <el-col :span="10">
-             <el-input  placeholder="请输入创建人" v-model="bugForm.bug_creator"></el-input>
-           </el-col>
-           <el-col   class="line text-right padding-right-10" :span="4">处理人</el-col>
-           <el-col :span="10">
-             <el-input  placeholder="请输入处理人" v-model="bugForm.bug_handler"></el-input>
-           </el-col>
-         </el-form-item>
-         <el-form-item label="创建时间" prop="bug_create_time" >
-           <el-col :span="10">
-             <el-date-picker style="width: 100%"
-               v-model="bugForm.bug_create_time"
-               type="date"
-               placeholder="请选择创建时间">
-             </el-date-picker>
+             <el-select v-model="bugForm.bug_handler" style="width: 100%" placeholder="请选择处理人">
+               <el-option
+                 v-for="item in userList"
+                 :key="item.user_id"
+                 :label="item.full_name"
+                 :value="item.user_id">
+               </el-option>
+             </el-select>
+             <!--<el-input  placeholder="请输入处理人" v-model="bugForm.bug_handler"></el-input>-->
            </el-col>
            <el-col  class="line text-right padding-right-10" :span="4">缺陷状态</el-col>
            <el-col :span="10">
@@ -126,6 +129,7 @@
              </el-select>
            </el-col>
          </el-form-item>
+
          <el-form-item label="缺陷内容"  prop="bug_content">
            <div class="demand-editor">
              <!--<ueditor :content=uetest :config=ueconfig :id="ue1"></ueditor>-->
@@ -170,6 +174,8 @@
           wordCount: false,
           toolbars: this.config.ueditorToolbar
         },
+        currentPage:1,
+        totalCount:0,
         projectBugList: [],
         bugFormVisible: false,
         bugDeleteVisible: false,
@@ -200,28 +206,46 @@
               [{ 'list': 'ordered'}, { 'list': 'bullet' }],
             ]
           }
-        }
+        },
+        userList:[]
       }
     },
     created(){
-      this.getProjectBugList()
+      this.getProjectBugList();
+      this.getUserList()
     },
     methods :{
-      getProjectBugList:function () {
+      getProjectBugList:function (cPage) {
         var vm=this;
+        if(cPage==null){
+            cPage=1;
+            vm.currentPage=1;
+        }
         vm.$http({
           method: 'get',
           url: vm.config.baseUrl+'project/getProjectBugList',
           params:{
-            project_id:vm.projectId
+            project_id:vm.projectId,
+            currentPage:cPage
           }
         }).then(function(response) {
-          var data=response.data
-          vm.projectBugList=data.projectBugList
+          var data = response.data
+            var statusCode=data.code;
+            if(statusCode==0) {
+
+              vm.projectBugList = data.projectBugList
+              vm.totalCount=data.count
+
+            }
 
         }).catch(function(response){
           console.log(response)
         })
+      },
+      handleCurrentChange:function (val) {
+        var vm=this;
+        vm.currentPage = val;
+        vm.getProjectBugList(val);
       },
       bugFormOpen:function () {
         this.bugFormVisible = true;
@@ -287,6 +311,21 @@
           } else {
             vm.$message.error('提交失败！！');
           }
+        })
+      },
+      indexMethod(index) {
+        return ((this.currentPage-1)*10+1)+index;
+      },
+      getUserList:function(){
+        var vm=this;
+        vm.$http({
+          method: 'get',
+          url: vm.config.baseUrl+'user/getUserList'
+        }).then(function(response) {
+          var data=response.data;
+          vm.userList=data.userList;
+        }).catch(function(response){
+          console.log(response)
         })
       }
 

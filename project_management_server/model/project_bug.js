@@ -10,8 +10,8 @@ var ProjectBug = sequelize.define('ProjectBug', {
     bug_level : {type : Sequelize.STRING},
     bug_priority : {type : Sequelize.STRING},
     bug_content : {type : Sequelize.STRING},
-    bug_handler : {type : Sequelize.STRING},
-    bug_creator : {type : Sequelize.STRING},
+    bug_handler : {type : Sequelize.INTEGER},
+    bug_creator : {type : Sequelize.INTEGER},
     bug_create_time : {type : Sequelize.STRING},
     bug_status : {type : Sequelize.STRING},
     project_id : {type : Sequelize.INTEGER}
@@ -24,4 +24,6 @@ var ProjectBug = sequelize.define('ProjectBug', {
     charset: 'utf8',
     collate: 'utf8_general_ci'
 });
+//ProjectBug.belongsTo(User, { foreignKey: 'bug_creator'})
+//ProjectBug.belongsTo(Users, { foreignKey: 'bug_handler'})
 module.exports=ProjectBug;

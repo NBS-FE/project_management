@@ -3,12 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var session = require('express-session')
+var session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
-var weekRouter = require('./routes/week_report')
+var weekRouter = require('./routes/week_report');
+var fileRouter = require('./routes/file_upload');
+
 
 
 var app = express();
@@ -23,7 +25,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({resave: true, saveUninitialized: false, secret: 'love',rolling:true,cookie: {maxAge: 1000*60*30}}));
 app.use(express.static(path.join(__dirname, 'public')));
-
 //设置跨域访问
 app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Credentials: true");
@@ -39,7 +40,6 @@ app.all('*', function(req, res, next) {
 //拦截器
 app.use(function (req, res, next) {
     var url = req.originalUrl;
-    console.log(req.session);
     if (url != "/project/getProjectList"&& url != "/user/login"&& !req.session.user) {
         res.json({
             code:8
@@ -53,6 +53,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/project', projectRouter);
 app.use('/week',weekRouter)
+app.use('/file',fileRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

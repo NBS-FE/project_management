@@ -14,7 +14,7 @@
                 <el-dropdown-item></el-dropdown-item>
                 <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>系统管理</el-dropdown-item>
                 <el-dropdown-item @click.native="jumpPassword"><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
-                <el-dropdown-item @click.native="jumpLogin"><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
+                <el-dropdown-item @click.native="jumpLogin"><i class="fa fa-power-off margin-right-5 danger"></i>用户退出</el-dropdown-item>
 
               </el-dropdown-menu>
             </el-dropdown>

@@ -3,7 +3,8 @@
  */
 
 var Sequelize = require('sequelize');
-var sequelize=require('../conf/db')
+var sequelize=require('../conf/db');
+var fileUploadModel=require('../model/file_upload');
 var ProjectDemand = sequelize.define('ProjectDemand', {
     demand_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     demand_title : {type : Sequelize.STRING},
@@ -21,4 +22,5 @@ var ProjectDemand = sequelize.define('ProjectDemand', {
     charset: 'utf8',
     collate: 'utf8_general_ci'
 });
+ProjectDemand.hasMany(fileUploadModel, {foreignKey:'file_upload_type_id', targetKey:'demand_id'});
 module.exports=ProjectDemand;

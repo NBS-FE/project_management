@@ -5,6 +5,7 @@
 var Sequelize = require('sequelize');
 var sequelize=require('../conf/db');
 var projectUrlModel=require('../model/project_url');
+var userModel=require('../model/user');
 var Project = sequelize.define('Project', {
     project_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     project_name : {type : Sequelize.STRING},
