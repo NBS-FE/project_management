@@ -188,8 +188,8 @@
       getRecordList: function () {
         var vm = this;
         vm.$http({
-          method: 'post',
-          data:{week_id:vm.weekId},
+          method: 'get',
+          params:{week_id:vm.weekId},
           url: vm.config.baseUrl+'week/getRecordList'
         }).then(function (result) {
           var data = result.data;
