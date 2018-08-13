@@ -16,7 +16,6 @@ var jsonWrite = function (res, ret) {
 };
 
 
-
 /**
  * 删除项目网址
  * @param req
@@ -34,15 +33,58 @@ exports.deleteFile=function (req, res, next) {
                 }
             }
             if(resultData!=null){
-                try {
-                    fs.unlink(systemConfig.fileUploadUrl + fileUpload.file_upload_url)
-                }catch (e){
-                    console.log(e)
-                }
+                var fileUrl=systemConfig.fileUploadUrl + fileUpload.file_upload_url
+                fs.exists(fileUrl,function(exists){
+                    if(exists){
+                        fs.unlink(fileUrl)
+                    }else{
+                        console.log("文件不存在")
+                    }
+                })
             }
             jsonWrite(res, resultData);
         }).catch(function (err) {
         console.log('project/deleteFileUpload error:' + err)
     })
 
+}
+/**
+ * 新增附件
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.addFile=function (req, res, next) {
+
+    var fileData=req.body;
+    var resultData=null;
+    if(req.files!=null&&req.files.length>0){
+        var uploadList=[];
+        req.files.forEach(function (defile) {
+
+            var fupload={
+                file_upload_name:defile.originalname,
+                file_upload_type:fileData.file_type,
+                file_upload_type_sub:fileData.file_type_sub,
+                file_upload_type_id:fileData.file_type_id,
+                file_upload_creator:req.session.user.full_name,
+                file_upload_create_time:new Date(),
+                file_upload_url:"uploads/"+defile.filename
+            }
+            uploadList.push(fupload)
+
+        })
+
+        fileUploadModel.bulkCreate(uploadList).then(function (fileResult) {
+
+            if(fileResult!=null){
+                resultData={
+                    fileList:fileResult
+                }
+            }
+            jsonWrite(res, resultData);
+        })
+    }else {
+        jsonWrite(res, resultData);
+    }
 }

@@ -8,6 +8,7 @@ var FileUpload = sequelize.define('FileUpload', {
     file_upload_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     file_upload_name : {type : Sequelize.STRING},
     file_upload_type : {type : Sequelize.STRING},
+    file_upload_type_sub : {type : Sequelize.STRING},
     file_upload_type_id : {type : Sequelize.STRING},
     file_upload_creator : {type : Sequelize.STRING},
     file_upload_create_time : {type : Sequelize.STRING},

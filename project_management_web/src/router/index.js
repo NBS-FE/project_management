@@ -17,6 +17,7 @@ export default new Router({
         { path: 'setting/:projectId', component: resolve => require(['../views/project_setting.vue'], resolve) },
         { path: 'bug/:projectId', component: resolve => require(['../views/project_bug.vue'], resolve) },
         { path: 'bugdetail/:projectId/:bugId', component: resolve => require(['../views/project_bug_detail.vue'], resolve) },
+        { path: 'releasedetail/:projectId/:releaseId', component: resolve => require(['../views/project_release_detail.vue'], resolve) },
       ]
     },
     { path: '/common', component: resolve => require(['../views/common.vue'], resolve),

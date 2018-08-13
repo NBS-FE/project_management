@@ -33,7 +33,7 @@
                 <tbody>
                 <tr v-for="fileupload in projectDemandInfo.FileUploads">
                   <td><a target="_blank" :href="config.baseUrl+fileupload.file_upload_url">{{fileupload.file_upload_name}}</a></td>
-                  <td width="60"> <el-button type="danger" size="small" icon="el-icon-delete" @click="fileDeleteOpen(fileupload)" circle></el-button></td>
+                  <td width="60"> <el-button type="danger" size="mini" icon="el-icon-delete" @click="fileDeleteOpen(fileupload)" circle></el-button></td>
                 </tr>
                 </tbody>
               </table>
@@ -427,7 +427,8 @@
 
   }
   .home-table tbody td{
-    padding: 12px!important;
+    padding: 8px!important;
+    vertical-align: middle!important;
   }
   .demand-editor {
     line-height: 20px;
