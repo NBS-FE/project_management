@@ -10,6 +10,7 @@ var userRouter = require('./routes/user');
 var projectRouter = require('./routes/project');
 var weekRouter = require('./routes/week_report');
 var fileRouter = require('./routes/file_upload');
+var releaseRouter = require('./routes/project_release');
 
 
 
@@ -52,14 +53,13 @@ app.use(function (req, res, next) {
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/project', projectRouter);
+app.use('/release', releaseRouter);
 app.use('/week',weekRouter)
 app.use('/file',fileRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
-
 
 // error handler
 app.use(function(err, req, res, next) {
