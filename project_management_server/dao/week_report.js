@@ -3,6 +3,10 @@
  */
 var weekReportModel = require('../model/week_report')
 var weekDetail = require('../model/week_detail')
+var userModel = require('../model/user')
+var user = {
+    association:weekDetail.belongsTo(userModel,{foreignKey:'user_id',as:'user'})
+}
 
 var jsonWrite = function (res, ret) {
     if(typeof ret === 'undefined') {
@@ -93,8 +97,8 @@ exports.deleteWeekReport = function(req, res, next){
     })
 }
 exports.getRecordList = function (req, res, next) {
-    var params = req.body;
-    weekDetail.findAndCountAll({where:{week_id:params.week_id}}).then(function (result) {
+    var params = req.query.week_id;
+    weekDetail.findAndCountAll({include:user,where:{week_id:params}}).then(function (result) {
         var resultData=undefined;
         if(result!=null){
             resultData={
