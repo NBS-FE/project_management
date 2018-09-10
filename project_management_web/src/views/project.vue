@@ -16,7 +16,7 @@
               <el-dropdown-menu  slot="dropdown">
                 <el-dropdown-item></el-dropdown-item>
                 <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>系统管理</el-dropdown-item>
-                <el-dropdown-item><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
+                <el-dropdown-item @click.native="jumpPassword"><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
                 <el-dropdown-item @click.native="userLogout"><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
 
               </el-dropdown-menu>
@@ -65,6 +65,20 @@
           <router-view/>
         </el-main>
       </el-container>
+      <el-dialog title="修改密码" :visible.sync="dialogPassVisible">
+        <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
+          <el-form-item label="新密码" prop="user_password">
+            <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="checkPass">
+            <el-input type="password" v-model="pass.checkPass" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogPassVisible = false">取消</el-button>
+          <el-button type="primary" @click="passSubmit">确定</el-button>
+        </div>
+      </el-dialog>
     </el-container>
 
 
@@ -72,11 +86,43 @@
 <script>
   export default {
     data() {
+      var validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else {
+          if (this.pass.checkPass !== '') {
+            this.$refs.pass.validateField('checkPass');
+          }
+          callback();
+        }
+      };
+      var validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.pass.user_password) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      };
       return {
         loginUser:sessionStorage.getItem('user'),
         projectInfo:"",
         projectId:this.$route.params.projectId,
-        activeRouter:this.$route.fullPath
+        activeRouter:this.$route.fullPath,
+        dialogPassVisible:false,
+        pass:{
+          user_password:'',
+          checkPass:''
+        },
+        passRules:{
+          user_password: [
+            { validator: validatePass, trigger: 'blur' }
+          ],
+          checkPass: [
+            { validator: validatePass2, trigger: 'blur' }
+          ],
+        }
       }
     },
     created(){
@@ -95,7 +141,7 @@
               project_id:vm.projectId
           }
         }).then(function(response) {
-          var data=response.data
+          var data=response.data;
           var code=data.code;
           if(code==0){
             vm.projectInfo=data.projectInfo
@@ -111,6 +157,35 @@
       },
       returnPage:function () {
         this.$router.push({ path: '/projectlist' })
+      },
+      jumpPassword:function () {
+        this.dialogPassVisible = true;
+        if(this.$refs['pass']!=undefined){
+          this.$refs['pass'].resetFields();
+        }
+      },
+      passSubmit:function () {
+        var vm=this;
+        this.$refs['pass'].validate((valid) => {
+          if(valid){
+            var userInfo = JSON.parse(sessionStorage.getItem('user'));
+            userInfo.user_password = vm.pass.user_password;
+            vm.$http({
+              method: 'POST',
+              url: vm.config.baseUrl + 'user/updateUser',
+              data: userInfo
+            }).then(function (data) {
+              var result = data.data;
+              var response = result.code;
+              if (response == 0) {
+                vm.dialogPassVisible = false;
+                vm.$message({message: '提交成功！！', type: 'success'});
+              } else {
+                vm.$message.error('提交失败！！');
+              }
+            })
+          }
+        })
       },
       userLogout:function () {
           var vm=this;
