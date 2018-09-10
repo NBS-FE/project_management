@@ -13,7 +13,7 @@
               <el-dropdown-menu  slot="dropdown">
                 <el-dropdown-item></el-dropdown-item>
                 <el-dropdown-item @click.native="jumpUser"><i class="fa fa-user margin-right-5 info"></i>系统管理</el-dropdown-item>
-                <el-dropdown-item><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
+                <el-dropdown-item @click.native="jumpPassword"><i class="fa fa-lock margin-right-5 success"></i>修改密码</el-dropdown-item>
                 <el-dropdown-item @click.native="userLogout"><i class="fa fa-power-off margin-right-5 danger"></i>用户注销</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -107,7 +107,7 @@
           <el-button type="primary" @click.native="projectSubmit" >提交</el-button>
         </div>
       </el-dialog>
-      <!--<el-dialog title="修改密码" :visible.sync="dialogPassVisible">
+      <el-dialog title="修改密码" :visible.sync="dialogPassVisible">
         <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
           <el-form-item label="新密码" prop="user_password">
             <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>
@@ -120,7 +120,7 @@
           <el-button @click="dialogPassVisible = false">取消</el-button>
           <el-button type="primary" @click="passSubmit">确定</el-button>
         </div>
-      </el-dialog>-->
+      </el-dialog>
     </el-container>
 
 
@@ -234,6 +234,35 @@
           }
         })
 
+      },
+      jumpPassword:function () {
+        this.dialogPassVisible = true;
+        if(this.$refs['pass']!=undefined){
+          this.$refs['pass'].resetFields();
+        }
+      },
+      passSubmit:function () {
+        var vm=this;
+        this.$refs['pass'].validate((valid) => {
+          if(valid){
+            var userInfo = JSON.parse(sessionStorage.getItem('user'));
+            userInfo.user_password = vm.pass.user_password;
+            vm.$http({
+              method: 'POST',
+              url: vm.config.baseUrl + 'user/updateUser',
+              data: userInfo
+            }).then(function (data) {
+              var result = data.data;
+              var response = result.code;
+              if (response == 0) {
+                vm.dialogPassVisible = false;
+                vm.$message({message: '提交成功！！', type: 'success'});
+              } else {
+                vm.$message.error('提交失败！！');
+              }
+            })
+          }
+        })
       },
       projectSubmit:function () {
         var vm=this;
