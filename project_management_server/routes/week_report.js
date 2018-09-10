@@ -27,7 +27,7 @@ router.post('/addWeekRecord',function (req, res, next) {
 router.post('/deleteWeekReport',function (req, res, next) {
     weekReportDao.deleteWeekReport(req, res, next)
 })
-router.post('/getRecordList',function (req, res, next) {
+router.get('/getRecordList',function (req, res, next) {
     weekReportDao.getRecordList(req, res, next)
 })
 
