@@ -1,78 +1,78 @@
 <template>
-    <div>
-      <div style="height:50px;background: #eee;margin: -20px;line-height: 50px" class="margin-bottom-10">
-        <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
-          <el-breadcrumb-item class="margin-left-20" :to="{ path: '/common/weekReport' }">周报管理</el-breadcrumb-item>
-          <el-breadcrumb-item>周报详情</el-breadcrumb-item>
-        </el-breadcrumb>
-      </div>
-      <div style="width: 1000px;padding:  10px 20px">
-        <div class="itme-title">周报基本信息
-        </div>
-        <div class="padding-10">
-          <table class="table table-bordered  fs14 home-table" >
-            <tbody>
-            <tr>
-              <td width="150" class="info-title">标题</td>
-              <td colspan="3">{{weekInfo.report_title}}</td>
-            </tr>
-            <tr>
-              <td width="150" class="info-title">时间</td>
-              <td colspan="3">{{weekInfo.report_time}}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="itme-title margin-top-20">列表
-          <el-button type="success"  style="float: right;margin-top: -5px"  size="small" plain @click="peopleFormOpen('add')"><i class="fa fa-plus margin-right-5"></i>新增</el-button>
-        </div>
-        <div class="padding-10">
-          <el-table :data="weekPeopleList" border style="width: 100%;margin-top:10px;">
-            <el-table-column label="序号" width="60" type="index" :index="indexMethod" ></el-table-column>
-            <el-table-column prop="user_name" width="100" label="姓名"></el-table-column>
-            <el-table-column  label="工作内容">
-              <template slot-scope="scope">
-                <div v-html="scope.row.content"></div>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="100">
-              <template slot-scope="scope">
-                <el-button type="primary" v-show="loginUser.user_id==scope.row.user_id" title="编辑" size="small" @click="peopleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
-                <!--<el-button type="danger" size="small" icon="el-icon-delete" @click="userDeleteOpen(scope.row.user_id)" circle></el-button>-->
-                <el-button type="danger" v-show="loginUser.user_id==scope.row.user_id" title="删除记录" style="margin-left:5px;" size="small" @click="recordDeleteOpen(scope.row.wd_id)" icon="el-icon-delete" circle></el-button>
-
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <el-dialog class="bug-record-panel" width="900px" :title="title" :visible.sync="bugRecordFormVisible" :close-on-click-modal="false"  >
-          <el-form :model="peopleRecordForm" :rules="bugRecordRules" label-width="80px"  ref="peopleRecordForm"  style="padding: 0 20px">
-           <!-- <el-form-item label="姓名" prop="user_name" >
-              <el-input  placeholder="请输入创建人" v-model="peopleRecordForm.user_name"></el-input>
-            </el-form-item>-->
-            <el-form-item label="工作内容"  prop="content">
-              <div class="demand-editor">
-                <UE :defaultMsg='uecontent' :config=ueconfig ref="ue"></UE>
-              </div>
-
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click.native="bugRecordFormVisible = false">取消</el-button>
-            <el-button type="primary" @click.native="peopleRecordSubmit" >提交</el-button>
-          </div>
-        </el-dialog>
-        <el-dialog title="删除记录" :visible.sync="dialogDeleteVisible" width="500px">
-          <div class="fs16 danger">
-            确定要删除该记录吗？
-          </div>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogDeleteVisible = false">取消</el-button>
-            <el-button type="primary" @click="deleteSubmit">确定</el-button>
-          </div>
-        </el-dialog>
-      </div>
+  <div>
+    <div style="height:50px;background: #eee;margin: -20px;line-height: 50px" class="margin-bottom-10">
+      <el-breadcrumb separator-class="el-icon-arrow-right" style="display: inline-block">
+        <el-breadcrumb-item class="margin-left-20" :to="{ path: '/common/weekReport' }">周报管理</el-breadcrumb-item>
+        <el-breadcrumb-item>周报详情</el-breadcrumb-item>
+      </el-breadcrumb>
     </div>
+    <div style="width: 1000px;padding:  10px 20px">
+      <div class="itme-title">周报基本信息
+      </div>
+      <div class="padding-10">
+        <table class="table table-bordered  fs14 home-table" >
+          <tbody>
+          <tr>
+            <td width="150" class="info-title">标题</td>
+            <td colspan="3">{{weekInfo.report_title}}</td>
+          </tr>
+          <tr>
+            <td width="150" class="info-title">时间</td>
+            <td colspan="3">{{weekInfo.report_time}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="itme-title margin-top-20">列表
+        <el-button type="success"  style="float: right;margin-top: -5px"  size="small" plain @click="peopleFormOpen('add')"><i class="fa fa-plus margin-right-5"></i>新增</el-button>
+      </div>
+      <div class="padding-10">
+        <el-table :data="weekPeopleList" border style="width: 100%;margin-top:10px;">
+          <el-table-column label="序号" width="60" type="index" :index="indexMethod" ></el-table-column>
+          <el-table-column prop="user_name" width="100" label="姓名"></el-table-column>
+          <el-table-column  label="工作内容">
+            <template slot-scope="scope">
+              <div v-html="scope.row.content"></div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100">
+            <template slot-scope="scope">
+              <el-button type="primary" v-show="loginUser.user_id==scope.row.user_id" title="编辑" size="small" @click="peopleFormOpen('edit',scope.row)" icon="el-icon-edit" circle></el-button>
+              <!--<el-button type="danger" size="small" icon="el-icon-delete" @click="userDeleteOpen(scope.row.user_id)" circle></el-button>-->
+              <el-button type="danger" v-show="loginUser.user_id==scope.row.user_id" title="删除记录" style="margin-left:5px;" size="small" @click="recordDeleteOpen(scope.row.wd_id)" icon="el-icon-delete" circle></el-button>
+
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <el-dialog class="bug-record-panel" width="900px" :title="title" :visible.sync="bugRecordFormVisible" :close-on-click-modal="false"  >
+        <el-form :model="peopleRecordForm" :rules="bugRecordRules" label-width="80px"  ref="peopleRecordForm"  style="padding: 0 20px">
+          <!-- <el-form-item label="姓名" prop="user_name" >
+             <el-input  placeholder="请输入创建人" v-model="peopleRecordForm.user_name"></el-input>
+           </el-form-item>-->
+          <el-form-item label="工作内容"  prop="content">
+            <div class="demand-editor">
+              <UE :defaultMsg='uecontent' :config=ueconfig ref="ue"></UE>
+            </div>
+
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click.native="bugRecordFormVisible = false">取消</el-button>
+          <el-button type="primary" @click.native="peopleRecordSubmit" >提交</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="删除记录" :visible.sync="dialogDeleteVisible" width="500px">
+        <div class="fs16 danger">
+          确定要删除该记录吗？
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogDeleteVisible = false">取消</el-button>
+          <el-button type="primary" @click="deleteSubmit">确定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -80,37 +80,37 @@
   export default {
     components: {UE},
     data(){
-        return {
-          dialogDeleteVisible:false,
-          weekPeopleList:[],
-          loginUser:JSON.parse(sessionStorage.getItem('user')),
-          delId:'',
-          weekInfo:{
-            report_title:'',
-            report_time:''
-          },
-          currentPage:1,
-          weekType:'add',
-          weekId:this.$route.params.week_report_id,
-          uecontent:"",
-          ueconfig: {
-            initialFrameWidth: null,
-            initialFrameHeight: 200,
-            wordCount: false,
-            toolbars:this.config.ueditorToolbar
-          },
-          title:'新增',
-          bugRecordFormVisible:false,
-          bugRecordRules:{
-            user_name:[
-                {required:true,message:'请输入姓名',trigger:'blur'}
-            ]
-          },
-          peopleRecordForm:{
-            user_name:'',
-            content:''
-          }
+      return {
+        dialogDeleteVisible:false,
+        weekPeopleList:[],
+        loginUser:JSON.parse(sessionStorage.getItem('user')),
+        delId:'',
+        weekInfo:{
+          report_title:'',
+          report_time:''
+        },
+        currentPage:1,
+        weekType:'add',
+        weekId:this.$route.params.week_report_id,
+        uecontent:"",
+        ueconfig: {
+          initialFrameWidth: null,
+          initialFrameHeight: 200,
+          wordCount: false,
+          toolbars:this.config.ueditorToolbar
+        },
+        title:'新增',
+        bugRecordFormVisible:false,
+        bugRecordRules:{
+          user_name:[
+            {required:true,message:'请输入姓名',trigger:'blur'}
+          ]
+        },
+        peopleRecordForm:{
+          user_name:'',
+          content:''
         }
+      }
     },
     created(){
       this.getWeekBasic();
@@ -118,18 +118,18 @@
     },
     methods:{
       getWeekBasic:function() {
-          var vm = this;
-          vm.$http({
-            method: 'post',
-            data:{week_report_id:vm.$route.params.week_report_id},
-            url: vm.config.baseUrl+'week/weekDetail'
-          }).then(function (result) {
-            var data = result.data;
-            var response = data.code;
-            if(response==0){
-                vm.weekInfo = data.week;
-            }
-          })
+        var vm = this;
+        vm.$http({
+          method: 'post',
+          data:{week_report_id:vm.$route.params.week_report_id},
+          url: vm.config.baseUrl+'week/weekDetail'
+        }).then(function (result) {
+          var data = result.data;
+          var response = data.code;
+          if(response==0){
+            vm.weekInfo = data.week;
+          }
+        })
       },
       peopleFormOpen:function (type,obj) {
         this.weekType = type;
@@ -157,39 +157,39 @@
         return (vm.currentPage-1)*10+index+1;
       },
       peopleRecordSubmit:function(){
-          var vm = this;
-          vm.$refs['peopleRecordForm'].validate((valid) => {
-              if(valid){
-                var peopleInfo = vm.peopleRecordForm;
-                peopleInfo.content = vm.$refs.ue.getUEContent();
-                peopleInfo.week_id = vm.weekId;
-                var url = '';
-                if(vm.weekType=='add'){
-                  url = 'week/addWeekRecord'
-                }else{
-                  url = 'week/updateRecord'
-                }
-                vm.$http({
-                    method:'post',
-                    url:this.config.baseUrl + url ,
-                    data:peopleInfo
-                }).then(function (result) {
-                  var data = result.data;
-                  var status = data.code;
-                  if(status==0){
-                      vm.bugRecordFormVisible=false;
-                      vm.$message({message:'提交成功！',type:'success'});
-                      vm.getRecordList();
-                  }
-                })
+        var vm = this;
+        vm.$refs['peopleRecordForm'].validate((valid) => {
+          if(valid){
+            var peopleInfo = vm.peopleRecordForm;
+            peopleInfo.content = vm.$refs.ue.getUEContent();
+            peopleInfo.week_id = vm.weekId;
+            var url = '';
+            if(vm.weekType=='add'){
+              url = 'week/addWeekRecord'
+            }else{
+              url = 'week/updateRecord'
+            }
+            vm.$http({
+              method:'post',
+              url:this.config.baseUrl + url ,
+              data:peopleInfo
+            }).then(function (result) {
+              var data = result.data;
+              var status = data.code;
+              if(status==0){
+                vm.bugRecordFormVisible=false;
+                vm.$message({message:'提交成功！',type:'success'});
+                vm.getRecordList();
               }
-          })
+            })
+          }
+        })
       },
       getRecordList: function () {
         var vm = this;
         vm.$http({
-          method: 'get',
-          params:{week_id:vm.weekId},
+          method: 'post',
+          data:{week_id:vm.weekId},
           url: vm.config.baseUrl+'week/getRecordList'
         }).then(function (result) {
           var data = result.data;
