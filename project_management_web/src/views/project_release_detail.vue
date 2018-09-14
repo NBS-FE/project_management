@@ -308,11 +308,11 @@
             release_id:vm.releaseId
           }
         }).then(function(response) {
-          var data=response.data
+          var data=response.data;
           var code=data.code;
           if(code==0){
             vm.projectReleaseInfo=data.projectRelease;
-            vm.releaseVerifier=data.projectRelease.releaseVerifier;
+            vm.releaseVerifier=data.projectRelease.releaseVerifier!=null?data.projectRelease.releaseVerifier:{};
             vm.releaseCreator=data.projectRelease.releaseCreator;
           }else {
             console.log(data.msg)
