@@ -47,16 +47,16 @@
               <span slot="title">缺陷记录</span>
             </el-menu-item>
             <el-menu-item :index="'/project/release/'+projectId">
-              <i class="el-icon-document"></i>
+              <i class="el-icon-share"></i>
               <span slot="title">发布记录</span>
             </el-menu-item>
             <el-menu-item :index="'/project/conference/'+projectId">
               <i class="el-icon-phone-outline"></i>
               <span slot="title">会议记录</span>
             </el-menu-item>
-            <el-menu-item :index="'/project/setting/'+projectId">
-              <i class="el-icon-setting"></i>
-              <span slot="title">项目设置</span>
+            <el-menu-item :index="'/project/file/'+projectId">
+              <i class="el-icon-document"></i>
+              <span slot="title">项目文档</span>
             </el-menu-item>
 
           </el-menu>
@@ -65,7 +65,7 @@
           <router-view/>
         </el-main>
       </el-container>
-      <el-dialog title="修改密码" :visible.sync="dialogPassVisible">
+      <el-dialog title="修改密码" :visible.sync="dialogPassVisible"  width="600px">
         <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
           <el-form-item label="新密码" prop="user_password">
             <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>
@@ -85,7 +85,11 @@
 </template>
 <script>
   export default {
+<<<<<<< Updated upstream
     data() {
+=======
+    data()  {
+>>>>>>> Stashed changes
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
@@ -215,6 +219,35 @@
       },
       handleClose(key, keyPath) {
         console.log(key, keyPath);
+      },
+      jumpPassword:function () {
+        this.dialogPassVisible = true;
+        if(this.$refs['pass']!=undefined){
+          this.$refs['pass'].resetFields();
+        }
+      },
+      passSubmit:function () {
+        var vm=this;
+        this.$refs['pass'].validate((valid) => {
+          if(valid){
+            var userInfo = JSON.parse(sessionStorage.getItem('user'));
+            userInfo.user_password = vm.pass.user_password;
+            vm.$http({
+              method: 'POST',
+              url: vm.config.baseUrl + 'user/updateUser',
+              data: userInfo
+            }).then(function (data) {
+              var result = data.data;
+              var response = result.code;
+              if (response == 0) {
+                vm.dialogPassVisible = false;
+                vm.$message({message: '提交成功！！', type: 'success'});
+              } else {
+                vm.$message.error('提交失败！！');
+              }
+            })
+          }
+        })
       }
     }
   }

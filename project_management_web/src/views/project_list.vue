@@ -107,7 +107,22 @@
           <el-button type="primary" @click.native="projectSubmit" >提交</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="修改密码" :visible.sync="dialogPassVisible">
+      <el-dialog title="修改密码" :visible.sync="dialogPassVisible" width="600px">
+        <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
+          <el-form-item label="新密码" prop="user_password">
+            <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="checkPass">
+            <el-input type="password" v-model="pass.checkPass" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogPassVisible = false">取消</el-button>
+          <el-button type="primary" @click="passSubmit">确定</el-button>
+        </div>
+      </el-dialog>
+      <!--<el-dialog title="修改密码" :visible.sync="dialogPassVisible">
+>>>>>>> Stashed changes
         <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
           <el-form-item label="新密码" prop="user_password">
             <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>
@@ -292,7 +307,36 @@
             })
           }
         })
-      }
+      },
+      jumpPassword:function () {
+        this.dialogPassVisible = true;
+        if(this.$refs['pass']!=undefined){
+          this.$refs['pass'].resetFields();
+        }
+      },
+      passSubmit:function () {
+        var vm=this;
+        this.$refs['pass'].validate((valid) => {
+          if(valid){
+            var userInfo = JSON.parse(sessionStorage.getItem('user'));
+            userInfo.user_password = vm.pass.user_password;
+            vm.$http({
+              method: 'POST',
+              url: vm.config.baseUrl + 'user/updateUser',
+              data: userInfo
+            }).then(function (data) {
+              var result = data.data;
+              var response = result.code;
+              if (response == 0) {
+                vm.dialogPassVisible = false;
+                vm.$message({message: '提交成功！！', type: 'success'});
+              } else {
+                vm.$message.error('提交失败！！');
+              }
+            })
+          }
+        })
+      },
     }
   }
 </script>
