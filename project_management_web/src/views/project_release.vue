@@ -265,7 +265,7 @@
           if (valid) {
             var releaseInfo = this.releaseForm;
             releaseInfo.release_content=vm.$refs.ue.getUEContent();
-            if(releaseInfo.release_time!=null&&releaseInfo.release_time.length>1){
+            if(releaseInfo.release_time!=null){
               releaseInfo.release_time=vm.$moment(releaseInfo.release_time).format("YYYY-MM-DD");
             }
             releaseInfo.project_id=vm.projectId;
