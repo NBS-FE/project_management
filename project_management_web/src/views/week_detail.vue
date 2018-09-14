@@ -8,6 +8,7 @@
     </div>
     <div style="width: 1000px;padding:  10px 20px">
       <div class="itme-title">周报基本信息
+        <el-button type="primary"  style="float: right;margin-top: -5px"  size="small" plain @click="reportFormOpen()"><i class="fa fa-edit margin-right-5"></i>修改</el-button>
       </div>
       <div class="padding-10">
         <table class="table table-bordered  fs14 home-table" >
@@ -19,6 +20,10 @@
           <tr>
             <td width="150" class="info-title">时间</td>
             <td colspan="3">{{weekInfo.report_time}}</td>
+          </tr>
+          <tr>
+            <td width="150" class="info-title">周报汇总</td>
+            <td colspan="3"  v-html='weekInfo.report_content'></td>
           </tr>
           </tbody>
         </table>
@@ -45,6 +50,27 @@
           </el-table-column>
         </el-table>
       </div>
+
+      <el-dialog :title="reportTitle" :visible.sync="reportFormVisible"  width="900px">
+        <el-form :model="weekReport"   ref="weekReport" label-width="80px">
+          <el-form-item label="标题" prop="report_title">
+            <el-input  placeholder="请输入标题" v-model="weekReport.report_title"></el-input>
+          </el-form-item>
+          <el-form-item label="时间" prop="report_time">
+            <el-date-picker type="date" style="width: 100%" value-format="yyyy-MM-dd" placeholder="选择时间" v-model="weekReport.report_time"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="周报汇总"  prop="content">
+            <div class="demand-editor">
+              <UE1 :defaultMsg='reportcontent' :config=ueconfig  ref="ue"></UE1>
+            </div>
+
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="reportFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="reportSubmit">确定</el-button>
+        </div>
+      </el-dialog>
       <el-dialog class="bug-record-panel" width="900px" :title="title" :visible.sync="bugRecordFormVisible" :close-on-click-modal="false"  >
         <el-form :model="peopleRecordForm" :rules="bugRecordRules" label-width="80px"  ref="peopleRecordForm"  style="padding: 0 20px">
           <!-- <el-form-item label="姓名" prop="user_name" >
@@ -52,7 +78,7 @@
            </el-form-item>-->
           <el-form-item label="工作内容"  prop="content">
             <div class="demand-editor">
-              <UE :defaultMsg='uecontent' :config=ueconfig ref="ue"></UE>
+              <UE :defaultMsg='uecontent' :config=ueconfig  ref="ue"></UE>
             </div>
 
           </el-form-item>
@@ -77,14 +103,17 @@
 
 <script>
   import UE from '@/components/ue.vue';
+  import UE1 from '@/components/ue_sub.vue';
   export default {
-    components: {UE},
+    components: {UE,UE1},
     data(){
       return {
         dialogDeleteVisible:false,
+        reportFormVisible:false,
         weekPeopleList:[],
         loginUser:JSON.parse(sessionStorage.getItem('user')),
         delId:'',
+        weekReport:{},
         weekInfo:{
           report_title:'',
           report_time:''
@@ -93,6 +122,7 @@
         weekType:'add',
         weekId:this.$route.params.week_report_id,
         uecontent:"",
+        reportcontent:"",
         ueconfig: {
           initialFrameWidth: null,
           initialFrameHeight: 200,
@@ -100,6 +130,7 @@
           toolbars:this.config.ueditorToolbar
         },
         title:'新增',
+        reportTitle:'周报修改',
         bugRecordFormVisible:false,
         bugRecordRules:{
           user_name:[
@@ -128,6 +159,40 @@
           var response = data.code;
           if(response==0){
             vm.weekInfo = data.week;
+            vm.weekReport=JSON.parse(JSON.stringify(data.week));
+            vm.reportcontent=vm.weekReport.report_content;
+          }
+        })
+      },
+      reportFormOpen:function () {
+        this.reportFormVisible = true;
+        this.weekReport=JSON.parse(JSON.stringify( this.weekInfo));
+        this.reportcontent=this.weekReport.report_content?this.weekReport.report_content:"";
+      },
+      reportSubmit:function () {
+        var vm=this;
+        vm.$refs['weekReport'].validate((valid) => {
+          if (valid) {
+            var reportInfo = this.weekReport;
+            reportInfo.report_content=vm.$refs.ue.getUEContent();
+            if(reportInfo.report_time!=null&&reportInfo.report_time.length>1){
+              reportInfo.report_time=vm.$moment(reportInfo.report_time).format("YYYY-MM-DD HH:mm:ss");
+            }
+            vm.$http({
+              method: 'POST',
+              url: this.config.baseUrl + 'week/updateWeek',
+              data: reportInfo
+            }).then(function (data) {
+              var result = data.data;
+              var response = result.code;
+              if (response == 0) {
+                vm.reportFormVisible = false;
+                vm.$message({message: '提交成功！！', type: 'success'});
+                vm.getWeekBasic()
+              } else {
+                vm.$message.error('提交失败！！');
+              }
+            })
           }
         })
       },
@@ -188,8 +253,7 @@
       getRecordList: function () {
         var vm = this;
         vm.$http({
-          method: 'post',
-          data:{week_id:vm.weekId},
+          params:{week_id:vm.weekId},
           url: vm.config.baseUrl+'week/getRecordList'
         }).then(function (result) {
           var data = result.data;

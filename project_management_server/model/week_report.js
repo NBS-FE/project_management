@@ -7,6 +7,7 @@ var weekReport = sequelize.define('weekReport', {
     week_report_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     report_title : {type : Sequelize.STRING},
     report_time : {type : Sequelize.STRING},
+    report_content : {type : Sequelize.STRING},
 },{
     timestamps: false,
     underscored: true,
