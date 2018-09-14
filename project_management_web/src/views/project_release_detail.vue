@@ -281,7 +281,7 @@
             ]
           }
         },
-        bugOpenNum:0,
+        releaseOpenNum:0,
         recordItems: [],
         userList:[],
         releaseCreator:"",
@@ -329,7 +329,10 @@
       },
       fileFormOpen:function () {
         this.fileFormVisible = true;
-        this.$refs['fileForm'].resetFields();
+        this.releaseOpenNum++;
+        if(this.releaseOpenNum>1) {
+          this.$refs['fileForm'].resetFields();
+        }
         this.fileForm={
           fileType:null
         }
