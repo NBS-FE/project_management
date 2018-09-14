@@ -122,7 +122,6 @@
         </div>
       </el-dialog>
       <!--<el-dialog title="修改密码" :visible.sync="dialogPassVisible">
->>>>>>> Stashed changes
         <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
           <el-form-item label="新密码" prop="user_password">
             <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>
@@ -135,7 +134,7 @@
           <el-button @click="dialogPassVisible = false">取消</el-button>
           <el-button type="primary" @click="passSubmit">确定</el-button>
         </div>
-      </el-dialog>
+      </el-dialog>-->
     </el-container>
 
 

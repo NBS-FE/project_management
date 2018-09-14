@@ -85,11 +85,7 @@
 </template>
 <script>
   export default {
-<<<<<<< Updated upstream
-    data() {
-=======
     data()  {
->>>>>>> Stashed changes
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
