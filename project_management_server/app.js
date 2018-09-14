@@ -11,6 +11,7 @@ var projectRouter = require('./routes/project');
 var weekRouter = require('./routes/week_report');
 var fileRouter = require('./routes/file_upload');
 var releaseRouter = require('./routes/project_release');
+var conferenceRouter = require('./routes/project_conference');
 
 
 
@@ -54,6 +55,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/project', projectRouter);
 app.use('/release', releaseRouter);
+app.use('/conference', conferenceRouter);
 app.use('/week',weekRouter)
 app.use('/file',fileRouter)
 // catch 404 and forward to error handler
