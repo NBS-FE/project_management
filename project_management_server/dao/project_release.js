@@ -70,7 +70,10 @@ exports.getProjectReleaseList=function (req, res, next) {
  */
 exports.updateProjectRelease=function (req, res, next) {
     var releaseData=req.body;
-    releaseData.release_create_time=moment(releaseData.release_create_time).format('YYYY-MM-DD HH:mm:ss')
+    releaseData.release_create_time=moment(releaseData.release_create_time).format('YYYY-MM-DD HH:mm:ss');
+    if(releaseData.release_time!=null){
+        releaseData.release_time=moment(releaseData.release_time).format('YYYY-MM-DD HH:mm:ss');
+    }
     projectReleaseModel.update(releaseData,{where:{release_id:releaseData.release_id}})
         .then(function (result) {
             var resultData=undefined;
