@@ -344,6 +344,7 @@
              file_type:5,
              file_type_sub:vm.fileForm.fileType,
              file_type_id:vm.releaseId,
+             project_id:vm.projectId
          }
             var formData = new FormData();
             for(var variable  in fileParams){

@@ -13,6 +13,7 @@ var FileUpload = sequelize.define('FileUpload', {
     file_upload_creator : {type : Sequelize.STRING},
     file_upload_create_time : {type : Sequelize.STRING},
     file_upload_url : {type : Sequelize.STRING},
+    project_id : {type : Sequelize.INTEGER},
 
 },{
     timestamps: false,

@@ -69,7 +69,8 @@ exports.addFile=function (req, res, next) {
                 file_upload_type_id:fileData.file_type_id,
                 file_upload_creator:req.session.user.full_name,
                 file_upload_create_time:new Date(),
-                file_upload_url:"uploads/"+defile.filename
+                file_upload_url:"uploads/"+defile.filename,
+                project_id:fileData.project_id
             }
             uploadList.push(fupload)
 
@@ -86,5 +87,25 @@ exports.addFile=function (req, res, next) {
         })
     }else {
         jsonWrite(res, resultData);
+    }
+}
+
+exports.getFileListByProjectId=function (req, res, next) {
+    var projectId=req.query.project_id;
+    if(projectId!=null&&projectId.length>0){
+        fileUploadModel.findAndCountAll({where:{project_id:projectId},offset:(req.query.currentPage-1)*10,limit:10}).then(function (result) {
+            var resultData=undefined;
+            if(result!=null){
+                resultData={
+                    fileList:result.rows,
+                    count:result.count
+                }
+            }
+            jsonWrite(res, resultData);
+        })}else {
+        res.json({
+            code:'1',
+            msg: '参数project_id不能为空！！'
+        });
     }
 }

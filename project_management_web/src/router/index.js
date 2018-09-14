@@ -14,10 +14,11 @@ export default new Router({
         { path: 'demanddetail/:projectId/:demandId', component: resolve => require(['../views/project_demand_detail.vue'], resolve) },
         { path: 'release/:projectId', component: resolve => require(['../views/project_release.vue'], resolve) },
         { path: 'conference/:projectId', component: resolve => require(['../views/project_conference.vue'], resolve) },
-        { path: 'setting/:projectId', component: resolve => require(['../views/project_setting.vue'], resolve) },
+        { path: 'file/:projectId', component: resolve => require(['../views/project_file.vue'], resolve) },
         { path: 'bug/:projectId', component: resolve => require(['../views/project_bug.vue'], resolve) },
         { path: 'bugdetail/:projectId/:bugId', component: resolve => require(['../views/project_bug_detail.vue'], resolve) },
         { path: 'releasedetail/:projectId/:releaseId', component: resolve => require(['../views/project_release_detail.vue'], resolve) },
+        { path: 'conferencedetail/:projectId/:conferenceId', component: resolve => require(['../views/project_conference_detail.vue'], resolve) },
       ]
     },
     { path: '/common', component: resolve => require(['../views/common.vue'], resolve),

@@ -41,7 +41,7 @@
           <router-view/>
         </el-main>
       </el-container>
-      <el-dialog title="修改密码" :visible.sync="dialogPassVisible">
+      <el-dialog title="修改密码" :visible.sync="dialogPassVisible" width="600px">
         <el-form :model="pass"  :rules="passRules" ref="pass" label-width="80px">
           <el-form-item label="新密码" prop="user_password">
             <el-input type="password" v-model="pass.user_password" auto-complete="off"></el-input>

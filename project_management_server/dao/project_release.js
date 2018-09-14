@@ -153,7 +153,8 @@ exports.addProjectReleaseFile=function (req, res, next) {
                 file_upload_type_id:releaseData.file_type_id,
                 file_upload_creator:req.session.user.full_name,
                 file_upload_create_time:new Date(),
-                file_upload_url:"uploads/release/"+defile.filename
+                file_upload_url:"uploads/release/"+defile.filename,
+                project_id:releaseData.project_id
             }
             uploadList.push(fupload)
 

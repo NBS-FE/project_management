@@ -22,7 +22,7 @@ var jsonWrite = function (res, ret) {
 exports.queryList=function (req, res, next) {
     projectModel.findAndCountAll({include: [{
         model: projectUrlModel
-    }],order: [['project_status', 'DESC']]}).then(function (result) {
+    }],order: [['project_status', 'DESC'],['project_id']]}).then(function (result) {
 		var resultData=undefined;
 		if(result!=null){
             resultData={

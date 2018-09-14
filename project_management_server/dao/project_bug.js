@@ -1,4 +1,5 @@
 var moment = require('moment');
+const Sequelize = require('sequelize');
 var projectBugModel=require('../model/project_bug')
 var projectBugRecordModel=require('../model/project_bug_record')
 var userModel=require('../model/user')
@@ -62,7 +63,7 @@ exports.getProjectBugList=function (req, res, next) {
     var projectId=req.query.project_id;
     if(projectId!=null&&projectId.length>0){
 
-    projectBugModel.findAndCountAll({include: [bugCreator,bugHandler],where:{project_id:projectId},offset:(req.query.currentPage-1)*10,limit:10}).then(function (result) {
+    projectBugModel.findAndCountAll({include: [bugCreator,bugHandler],order: [[Sequelize.fn('FIELD', Sequelize.col('bug_status'),'待修复','已驳回','已修复','已验证','已关闭')],['bug_id','DESC']],where:{project_id:projectId},offset:(req.query.currentPage-1)*10,limit:10}).then(function (result) {
         var resultData=undefined;
         if(result!=null){
             resultData={

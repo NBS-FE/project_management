@@ -43,7 +43,8 @@ exports.insertProjectDemand=function (req, res, next) {
                         file_upload_type_id:result.demand_id,
                         file_upload_creator:req.session.user.full_name,
                         file_upload_create_time:new Date(),
-                        file_upload_url:"uploads/"+defile.filename
+                        file_upload_url:"uploads/"+defile.filename,
+                        project_id:result.project_id
                     }
                     uploadList.push(fupload)
 
@@ -110,7 +111,8 @@ exports.updateProjectDemand=function (req, res, next) {
                         file_upload_type_id:demandData.demand_id,
                         file_upload_creator:req.session.user.full_name,
                         file_upload_create_time:new Date(),
-                        file_upload_url:"uploads/"+defile.filename
+                        file_upload_url:"uploads/"+defile.filename,
+                        project_id:demandData.project_id
                     }
                     uploadList.push(fupload)
 
