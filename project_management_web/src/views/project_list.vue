@@ -33,7 +33,17 @@
               <el-table-column type="expand" >
                 <template slot-scope="props" >
                  <div style="text-align: left" v-show="props.row.ProjectUrls&&props.row.ProjectUrls.length>0">网站入口：
-                    <a class="btn btn-default margin-left-10 info" v-for="(projectUrl,index) in props.row.ProjectUrls" target="_blank" v-bind:href="projectUrl.project_url">{{projectUrl.project_url_name}}<i class="margin-left-5 el-icon-d-arrow-right"></i></a>
+
+                   <el-popover
+                     v-for="(projectUrl,index) in props.row.ProjectUrls"
+                     :key="index"
+                     placement="top-start"
+                     width="200"
+                     trigger="hover"
+                     :content="projectUrl.project_url_other?projectUrl.project_url_other:'无'">
+                     <a class="btn btn-default margin-left-10 info"  slot="reference" target="_blank" v-bind:href="projectUrl.project_url">{{projectUrl.project_url_name}}<i class="margin-left-5 el-icon-d-arrow-right"></i></a>
+
+                   </el-popover>
                  </div>
 
                   <div style="text-align: left" class="danger" v-show="props.row.ProjectUrls==null||props.row.ProjectUrls.length==0">

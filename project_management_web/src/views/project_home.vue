@@ -70,6 +70,12 @@
             </template>
           </el-table-column>
           <el-table-column
+            width="150"
+            label="其他信息"
+            prop="project_url_other" >
+
+          </el-table-column>
+          <el-table-column
             width="100"
             header-align="center"
             class-name="text-center"
@@ -148,6 +154,9 @@
           <el-form-item label="URL" prop="project_url" >
             <el-input  placeholder="请输入URL" v-model="urlForm.project_url">
             </el-input>
+          </el-form-item>
+          <el-form-item label="其他信息" prop="project_url_other" >
+            <el-input placeholder="请输入其他信息" type="textarea" v-model="urlForm.project_url_other"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -291,7 +300,8 @@
           this.$refs['urlForm'].resetFields();
           this.urlForm = {
             project_url_name: '',
-            project_url: ''
+            project_url: '',
+            project_url_other: ''
           }
         }
       },
