@@ -8,6 +8,7 @@ var ProjectUrl = sequelize.define('ProjectUrl', {
     project_url_id : {type : Sequelize.INTEGER, autoIncrement : true, primaryKey : true, unique : true},
     project_url_name : {type : Sequelize.STRING},
     project_url : {type : Sequelize.STRING},
+    project_url_other : {type : Sequelize.STRING},
     project_id : {type : Sequelize.INTEGER}
 },{
     timestamps: false,
