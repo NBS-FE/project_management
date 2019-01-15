@@ -26,14 +26,14 @@
           <tr>
 
             <td width="150" class="info-title">处理人</td>
-            <td >{{projectBugInfo.bugHandler.full_name}}</td>
+            <td >{{projectBugInfo.bugHandler?projectBugInfo.bugHandler.full_name:""}}</td>
             <td width="150" class="info-title">缺陷状态</td>
             <td >{{projectBugInfo.bug_status}}</td>
 
           </tr>
           <tr>
             <td width="150" class="info-title">创建人</td>
-            <td width="320">{{projectBugInfo.bugCreator.full_name}}</td>
+            <td width="320">{{projectBugInfo.bugCreator?projectBugInfo.bugCreator.full_name:""}}</td>
             <td width="150" class="info-title">创建时间</td>
             <td width="320">{{projectBugInfo.bug_create_time | dateFormat('YYYY-MM-DD')}}</td>
 

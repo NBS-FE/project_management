@@ -69,7 +69,8 @@
                 <template slot-scope="scope" >
                   <el-tag
                     :type="scope.row.project_status === '进行中' ? 'warning' : 'success'"
-                    disable-transitions>{{scope.row.project_status}}</el-tag>
+                    disable-transitions>{{scope.row.project_status}}
+                  </el-tag>
                 </template>
               </el-table-column>
 

@@ -34,7 +34,7 @@ exports.addWeek=function (req, res, next) {
 }
 
 exports.queryWeekList=function (req, res, next) {
-    weekReportModel.findAndCountAll({order: [['report_time', 'DESC']]}).then(function (result) {
+    weekReportModel.findAndCountAll({order: [['report_time', 'DESC']],offset:(req.query.currentPage-1)*10,limit:10}).then(function (result) {
         var resultData=undefined;
         if(result!=null){
             resultData={
